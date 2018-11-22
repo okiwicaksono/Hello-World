@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Final Soccer Matches</string>
+    <string name="tab_text_1">Last Matches</string>
+    <string name="tab_text_2">Next Matches</string>
+    <string name="tab_text_3">Favorites</string>
+    <string name="vs">vs</string>
+    <string name="match_detail">Match Detail</string>
+    <string name="goals">Goals</string>
+    <string name="shots">Shots</string>
+    <string name="lineups">Lineups</string>
+    <string name="goalkeeper">Goalkeeper</string>
+    <string name="defenders">Defenders</string>
+    <string name="midfielders">Midfielders</string>
+    <string name="strikers">Strikers</string>
+    <string name="substitutes">Substitutes</string>
+    <string name="added_to_favorite">Added to favorite</string>
+    <string name="remove_from_favorite">Removed from favorite</string>
+    <string name="event_id">eventId</string>
+</resources>
