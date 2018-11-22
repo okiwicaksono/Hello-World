@@ -1,9 +1,11 @@
-package com.dicoding.finalsoccermatches.presentation.list
+package com.dicoding.finalsoccermatches.presentation.match
 
 import android.content.Context
 import com.dicoding.finalsoccermatches.domain.data.MatchRepository
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.CancellationException
+import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.channels.Channel
+import kotlinx.coroutines.experimental.launch
 
 class MatchPresenter(
     private val repository: MatchRepository,
@@ -19,10 +21,18 @@ class MatchPresenter(
             try {
                 viewStates.send(MatchContract.ViewState.LoadingState)
                 val matches = repository.getPastMatches().await()
-                viewStates.send(MatchContract.ViewState.ResultState(matches))
+                viewStates.send(
+                    MatchContract.ViewState.ResultState(
+                        matches
+                    )
+                )
             } catch (ex: Exception) {
                 if (ex !is CancellationException)
-                    viewStates.send(MatchContract.ViewState.ErrorState(ex.message ?: ""))
+                    viewStates.send(
+                        MatchContract.ViewState.ErrorState(
+                            ex.message ?: ""
+                        )
+                    )
             }
         }
     }
@@ -32,10 +42,18 @@ class MatchPresenter(
             try {
                 viewStates.send(MatchContract.ViewState.LoadingState)
                 val matches = repository.getNextMatches().await()
-                viewStates.send(MatchContract.ViewState.ResultState(matches))
+                viewStates.send(
+                    MatchContract.ViewState.ResultState(
+                        matches
+                    )
+                )
             } catch (ex: Exception) {
                 if (ex !is CancellationException)
-                    viewStates.send(MatchContract.ViewState.ErrorState(ex.message ?: ""))
+                    viewStates.send(
+                        MatchContract.ViewState.ErrorState(
+                            ex.message ?: ""
+                        )
+                    )
             }
         }
     }
@@ -45,10 +63,18 @@ class MatchPresenter(
             try {
                 viewStates.send(MatchContract.ViewState.LoadingState)
                 val matches = repository.getFavoriteMatches(context)
-                viewStates.send(MatchContract.ViewState.ResultState(matches))
+                viewStates.send(
+                    MatchContract.ViewState.ResultState(
+                        matches
+                    )
+                )
             } catch (ex: Exception) {
                 if (ex !is CancellationException)
-                    viewStates.send(MatchContract.ViewState.ErrorState(ex.message ?: ""))
+                    viewStates.send(
+                        MatchContract.ViewState.ErrorState(
+                            ex.message ?: ""
+                        )
+                    )
             }
         }
     }

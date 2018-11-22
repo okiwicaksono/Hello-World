@@ -1,4 +1,4 @@
-package com.dicoding.finalsoccermatches.presentation.list
+package com.dicoding.finalsoccermatches.presentation.match
 
 import android.content.Context
 import android.os.Bundle

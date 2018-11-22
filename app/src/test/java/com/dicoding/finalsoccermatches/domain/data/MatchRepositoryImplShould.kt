@@ -1,8 +1,8 @@
 package com.dicoding.finalsoccermatches.domain.data
 
-import com.dicoding.finalsoccermatches.external.api.MatchService
 import com.dicoding.finalsoccermatches.domain.entity.Match
 import com.dicoding.finalsoccermatches.domain.entity.MatchResponse
+import com.dicoding.finalsoccermatches.external.api.MatchService
 import kotlinx.coroutines.experimental.CompletableDeferred
 import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Assert.assertEquals

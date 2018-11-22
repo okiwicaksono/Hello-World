@@ -2,6 +2,8 @@ package com.dicoding.finalsoccermatches.presentation.list
 
 import com.dicoding.finalsoccermatches.domain.data.MatchRepository
 import com.dicoding.finalsoccermatches.domain.entity.Match
+import com.dicoding.finalsoccermatches.presentation.match.MatchContract
+import com.dicoding.finalsoccermatches.presentation.match.MatchPresenter
 import kotlinx.coroutines.experimental.CompletableDeferred
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
