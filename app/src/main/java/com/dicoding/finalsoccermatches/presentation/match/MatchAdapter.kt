@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import com.dicoding.finalsoccermatches.R
 import com.dicoding.finalsoccermatches.domain.entity.Match
@@ -14,8 +15,10 @@ import com.dicoding.finalsoccermatches.parseToDesiredTime
 import com.dicoding.finalsoccermatches.visible
 import org.jetbrains.anko.find
 
-class MatchAdapter(private val listener: (Match) -> Unit) :
-    ListAdapter<Match, MatchAdapter.MatchViewHolder>(MatchDiffCallback()) {
+class MatchAdapter(
+    private val detailListener: (Match) -> Unit,
+    private val calendarListener: (Match) -> Unit
+) : ListAdapter<Match, MatchAdapter.MatchViewHolder>(MatchDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MatchViewHolder {
         val rootView = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_match, parent, false)
@@ -24,14 +27,14 @@ class MatchAdapter(private val listener: (Match) -> Unit) :
             itemView.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    listener(getItem(position))
+                    detailListener(getItem(position))
                 }
             }
         }
     }
 
     override fun onBindViewHolder(viewHolder: MatchViewHolder, position: Int) {
-        viewHolder.bind(getItem(position))
+        viewHolder.bind(getItem(position), calendarListener)
     }
 
     class MatchViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -41,24 +44,21 @@ class MatchAdapter(private val listener: (Match) -> Unit) :
         private val awayScore: TextView = view.find(R.id.awayScore)
         private val homeTeamName: TextView = view.find(R.id.homeTeamName)
         private val awayTeamName: TextView = view.find(R.id.awayTeamName)
+        private val addToCalendar: ImageView = view.find(R.id.addToCalendar)
 
-        fun bind(match: Match) {
-            match.dateEvent?.let { dateEvent ->
-                match.strTime?.let { strTime ->
-                    date.text = parseToDesiredDate(dateString = dateEvent, timeString = strTime)
-                    time.text = parseToDesiredTime(dateString = dateEvent, timeString = strTime)
-                }
-            }
-            match.intHomeScore?.let {
-                homeScore.text = match.intHomeScore
-                homeScore.visible()
-            }
-            match.intAwayScore?.let {
-                awayScore.text = match.intAwayScore
-                awayScore.visible()
-            }
+        fun bind(match: Match, calendarListener: (Match) -> Unit) {
+            date.text = parseToDesiredDate(dateString = match.dateEvent, timeString = match.strTime)
+            time.text = parseToDesiredTime(dateString = match.dateEvent, timeString = match.strTime)
+            homeScore.text = match.intHomeScore.toString()
+            homeScore.visible()
+            awayScore.text = match.intAwayScore.toString()
+            awayScore.visible()
             homeTeamName.text = match.strHomeTeam
             awayTeamName.text = match.strAwayTeam
+
+            addToCalendar.setOnClickListener {
+                calendarListener(match)
+            }
         }
     }
 

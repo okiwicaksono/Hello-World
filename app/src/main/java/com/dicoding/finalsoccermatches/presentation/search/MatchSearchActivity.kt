@@ -1,7 +1,5 @@
 package com.dicoding.finalsoccermatches.presentation.search
 
-import android.app.SearchManager
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
@@ -12,9 +10,11 @@ import android.view.Menu
 import android.widget.Toast
 import com.dicoding.finalsoccermatches.BuildConfig
 import com.dicoding.finalsoccermatches.R
+import com.dicoding.finalsoccermatches.createCalendarIntent
 import com.dicoding.finalsoccermatches.domain.data.MatchRepository
 import com.dicoding.finalsoccermatches.domain.data.MatchRepositoryImpl
 import com.dicoding.finalsoccermatches.external.api.MatchService
+import com.dicoding.finalsoccermatches.parseToDesiredTimestamp
 import com.dicoding.finalsoccermatches.presentation.detail.DetailActivity
 import com.dicoding.finalsoccermatches.presentation.match.MatchAdapter
 import com.dicoding.finalsoccermatches.presentation.match.MatchContract
@@ -90,9 +90,21 @@ class MatchSearchActivity : AppCompatActivity(), MatchContract.View,
     private fun initView() {
         swipeRefresh.setOnRefreshListener(this)
 
-        adapter = MatchAdapter { match ->
+        adapter = MatchAdapter({ match ->
             startActivity<DetailActivity>(getString(R.string.event_id) to match.idEvent)
-        }
+        }, { match ->
+            val title = match.strEvent
+            val startTimeMillis = parseToDesiredTimestamp(match.dateEvent, match.strTime, 0)
+            val endTimeMillis = parseToDesiredTimestamp(match.dateEvent, match.strTime, 1)
+            startActivity(
+                createCalendarIntent(
+                    title = title,
+                    startDateMillis = startTimeMillis,
+                    endDateMillis = endTimeMillis,
+                    description = title
+                )
+            )
+        })
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,11 +14,13 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.dicoding.finalsoccermatches.BuildConfig
 import com.dicoding.finalsoccermatches.R
+import com.dicoding.finalsoccermatches.createCalendarIntent
 import com.dicoding.finalsoccermatches.domain.data.MatchRepository
 import com.dicoding.finalsoccermatches.domain.data.MatchRepositoryImpl
 import com.dicoding.finalsoccermatches.domain.entity.League
 import com.dicoding.finalsoccermatches.domain.entity.MatchType
 import com.dicoding.finalsoccermatches.external.api.MatchService
+import com.dicoding.finalsoccermatches.parseToDesiredTimestamp
 import com.dicoding.finalsoccermatches.presentation.detail.DetailActivity
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -119,9 +122,21 @@ class MatchFragment : Fragment(), MatchContract.View,
     private fun initView() {
         swipeRefresh.setOnRefreshListener(this)
 
-        adapter = MatchAdapter { match ->
+        adapter = MatchAdapter({ match ->
             startActivity<DetailActivity>(getString(R.string.event_id) to match.idEvent)
-        }
+        }, { match ->
+            val title = match.strEvent
+            val startTimeMillis = parseToDesiredTimestamp(match.dateEvent, match.strTime, 0)
+            val endTimeMillis = parseToDesiredTimestamp(match.dateEvent, match.strTime, 1)
+            startActivity(
+                createCalendarIntent(
+                    title = title,
+                    startDateMillis = startTimeMillis,
+                    endDateMillis = endTimeMillis,
+                    description = title
+                )
+            )
+        })
 
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.adapter = adapter
@@ -145,7 +160,7 @@ class MatchFragment : Fragment(), MatchContract.View,
                     spinnerAdapter = ArrayAdapter(it, android.R.layout.simple_spinner_item, viewState.leagues)
                     spinner.adapter = spinnerAdapter
 
-                    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+                    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                         override fun onNothingSelected(parent: AdapterView<*>?) {}
 
                         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -161,6 +176,7 @@ class MatchFragment : Fragment(), MatchContract.View,
             is MatchContract.ViewState.ErrorState -> {
                 swipeRefresh.isRefreshing = false
                 Toast.makeText(activity, viewState.error, Toast.LENGTH_SHORT).show()
+                Log.e("error", viewState.error)
             }
         }
     }

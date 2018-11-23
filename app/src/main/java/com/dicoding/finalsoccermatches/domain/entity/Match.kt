@@ -4,80 +4,84 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class Match(
     @JsonProperty("idEvent")
-    val idEvent: String? = null,
+    val idEvent: String = "",
+
+    @JsonProperty("strEvent")
+    val strEvent: String = "",
 
     @JsonProperty("strSport")
-    val strSport: String? = null,
+    val strSport: String = "",
 
     @JsonProperty("strHomeTeam")
-    val strHomeTeam: String? = null,
+    val strHomeTeam: String = "",
 
     @JsonProperty("strAwayTeam")
-    val strAwayTeam: String? = null,
+    val strAwayTeam: String = "",
 
     @JsonProperty("intHomeScore")
-    val intHomeScore: String? = null,
+    val intHomeScore: Int = 0,
 
     @JsonProperty("intAwayScore")
-    val intAwayScore: String? = null,
+    val intAwayScore: Int = 0,
 
     @JsonProperty("strHomeGoalDetails")
-    val strHomeGoalDetails: String? = null,
+    val strHomeGoalDetails: String? = "",
 
     @JsonProperty("strAwayGoalDetails")
-    val strAwayGoalDetails: String? = null,
+    val strAwayGoalDetails: String? = "",
 
     @JsonProperty("intHomeShots")
-    val intHomeShots: String? = null,
+    val intHomeShots: Int = 0,
 
     @JsonProperty("intAwayShots")
-    val intAwayShots: String? = null,
+    val intAwayShots: Int = 0,
 
     @JsonProperty("strHomeLineupGoalkeeper")
-    val strHomeLineupGoalkeeper: String? = null,
+    val strHomeLineupGoalkeeper: String? = "",
 
     @JsonProperty("strHomeLineupDefense")
-    val strHomeLineupDefense: String? = null,
+    val strHomeLineupDefense: String? = "",
 
     @JsonProperty("strHomeLineupMidfield")
-    val strHomeLineupMidfield: String? = null,
+    val strHomeLineupMidfield: String? = "",
 
     @JsonProperty("strHomeLineupForward")
-    val strHomeLineupForward: String? = null,
+    val strHomeLineupForward: String? = "",
 
     @JsonProperty("strHomeLineupSubstitutes")
-    val strHomeLineupSubstitutes: String? = null,
+    val strHomeLineupSubstitutes: String? = "",
 
     @JsonProperty("strAwayLineupGoalkeeper")
-    val strAwayLineupGoalkeeper: String? = null,
+    val strAwayLineupGoalkeeper: String? = "",
 
     @JsonProperty("strAwayLineupDefense")
-    val strAwayLineupDefense: String? = null,
+    val strAwayLineupDefense: String? = "",
 
     @JsonProperty("strAwayLineupMidfield")
-    val strAwayLineupMidfield: String? = null,
+    val strAwayLineupMidfield: String? = "",
 
     @JsonProperty("strAwayLineupForward")
-    val strAwayLineupForward: String? = null,
+    val strAwayLineupForward: String? = "",
 
     @JsonProperty("strAwayLineupSubstitutes")
-    val strAwayLineupSubstitutes: String? = null,
+    val strAwayLineupSubstitutes: String? = "",
 
     @JsonProperty("idHomeTeam")
-    val idHomeTeam: String? = null,
+    val idHomeTeam: String = "",
 
     @JsonProperty("idAwayTeam")
-    val idAwayTeam: String? = null,
+    val idAwayTeam: String = "",
 
     @JsonProperty("dateEvent")
-    val dateEvent: String? = null,
+    val dateEvent: String = "",
 
     @JsonProperty("strTime")
-    val strTime: String? = null
+    val strTime: String = ""
 ) {
     companion object {
         const val MATCH_TABLE: String = "MATCH_TABLE"
         const val ID_EVENT: String = "idEvent"
+        const val EVENT: String = "strEvent"
         const val SPORT: String = "strSport"
         const val HOME_TEAM_NAME: String = "strHomeTeam"
         const val AWAY_TEAM_NAME: String = "strAwayTeam"

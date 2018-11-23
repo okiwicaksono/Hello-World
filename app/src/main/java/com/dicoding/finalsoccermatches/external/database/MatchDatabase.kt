@@ -16,6 +16,7 @@ class MatchDatabase(private val context: Context) {
         insert(
             Match.MATCH_TABLE,
             Match.ID_EVENT to match.idEvent,
+            Match.EVENT to match.strEvent,
             Match.SPORT to match.strSport,
             Match.HOME_TEAM_NAME to match.strHomeTeam,
             Match.AWAY_TEAM_NAME to match.strAwayTeam,

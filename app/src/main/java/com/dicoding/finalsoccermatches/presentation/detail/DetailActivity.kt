@@ -118,20 +118,16 @@ class DetailActivity : AppCompatActivity(), DetailContract.View {
     private fun setupMatchToView(match: Match) {
         this.match = match
 
-        match.dateEvent?.let { dateEvent ->
-            match.strTime?.let { strTime ->
-                date.text = parseToDesiredDate(dateString = dateEvent, timeString = strTime)
-                time.text = parseToDesiredTime(dateString = dateEvent, timeString = strTime)
-            }
-        }
-        home_score.text = match.intHomeScore
-        away_score.text = match.intAwayScore
+        date.text = parseToDesiredDate(dateString = match.dateEvent, timeString = match.strTime)
+        time.text = parseToDesiredTime(dateString = match.dateEvent, timeString = match.strTime)
+        home_score.text = match.intHomeScore.toString()
+        away_score.text = match.intAwayScore.toString()
         home_team.text = match.strHomeTeam
         away_team.text = match.strAwayTeam
         home_goals.text = match.strHomeGoalDetails?.let { formatPlayerList(it) }
         away_goals.text = match.strAwayGoalDetails?.let { formatPlayerList(it) }
-        home_shots.text = match.intHomeShots
-        away_shots.text = match.intAwayShots
+        home_shots.text = match.intHomeShots.toString()
+        away_shots.text = match.intAwayShots.toString()
         home_goalkeeper.text = match.strHomeLineupGoalkeeper
         away_goalkeeper.text = match.strAwayLineupGoalkeeper
         home_defenders.text = match.strHomeLineupDefense?.let { formatPlayerList(it) }
@@ -143,8 +139,8 @@ class DetailActivity : AppCompatActivity(), DetailContract.View {
         home_substitutes.text = match.strHomeLineupSubstitutes?.let { formatPlayerList(it) }
         away_substitutes.text = match.strAwayLineupSubstitutes?.let { formatPlayerList(it) }
 
-        match.idHomeTeam?.let { presenter.loadTeamBadge(it, home_badge) }
-        match.idAwayTeam?.let { presenter.loadTeamBadge(it, away_badge) }
+        match.idHomeTeam.let { presenter.loadTeamBadge(it, home_badge) }
+        match.idAwayTeam.let { presenter.loadTeamBadge(it, away_badge) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -210,7 +206,7 @@ class DetailActivity : AppCompatActivity(), DetailContract.View {
 
     private fun removeFromFavorite() {
         try {
-            match.idEvent?.toInt()?.let { MatchDatabase(this).delete(it) }
+            match.idEvent.toInt().let { MatchDatabase(this).delete(it) }
             Snackbar.make(container, getString(R.string.remove_from_favorite), Snackbar.LENGTH_SHORT).show()
         } catch (e: SQLiteConstraintException) {
             Snackbar.make(container, e.localizedMessage, Snackbar.LENGTH_SHORT).show()
