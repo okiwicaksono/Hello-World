@@ -17,6 +17,7 @@ interface MatchRepository {
     fun getFavoriteMatches(context: Context): List<Match>
     fun getTeamBadge(teamId: String): Deferred<Team>
     fun getMatchDetails(eventId: String): Deferred<Match>
+    fun getMatchByKeyword(keyword: String): Deferred<List<Match>>
 }
 
 class MatchRepositoryImpl(
@@ -48,5 +49,10 @@ class MatchRepositoryImpl(
     override fun getMatchDetails(eventId: String): Deferred<Match> =
         GlobalScope.async {
             service.getMatchDetails(eventId).await().matches.first()
+        }
+
+    override fun getMatchByKeyword(keyword: String): Deferred<List<Match>> =
+        GlobalScope.async {
+            service.getMatchByKeyword(keyword).await().matches
         }
 }

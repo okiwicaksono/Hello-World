@@ -13,6 +13,7 @@ interface MatchContract {
         abstract fun loadPastMatches(leagueId: String)
         abstract fun loadNextMatches(leagueId: String)
         abstract fun loadFavoriteMatches(context: Context)
+        abstract fun loadMatchesByKeyword(keyword: String)
     }
 
     interface View {

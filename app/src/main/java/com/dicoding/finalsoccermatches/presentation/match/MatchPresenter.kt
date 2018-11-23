@@ -92,6 +92,27 @@ class MatchPresenter(
         }
     }
 
+    override fun loadMatchesByKeyword(keyword: String) {
+        launch {
+            try {
+                viewStates.send(MatchContract.ViewState.LoadingState)
+                val matches = repository.getMatchByKeyword(keyword).await()
+                viewStates.send(
+                    MatchContract.ViewState.MatchResultState(matches.filter { match ->
+                        match.strSport == "Soccer"
+                    })
+                )
+            } catch (ex: Exception) {
+                if (ex !is CancellationException)
+                    viewStates.send(
+                        MatchContract.ViewState.ErrorState(
+                            ex.message ?: ""
+                        )
+                    )
+            }
+        }
+    }
+
     override fun onCleared() {
         viewStates.cancel()
     }

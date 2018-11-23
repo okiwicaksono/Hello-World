@@ -1,9 +1,11 @@
 package com.dicoding.finalsoccermatches.presentation.detail
 
+import android.content.Intent
 import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.NavUtils
+import android.support.v4.app.TaskStackBuilder
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
@@ -155,7 +157,17 @@ class DetailActivity : AppCompatActivity(), DetailContract.View {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                NavUtils.navigateUpFromSameTask(this)
+                val upIntent: Intent? = NavUtils.getParentActivityIntent(this)
+
+                when {
+                    upIntent == null -> throw IllegalStateException("No Parent Activity Intent")
+                    NavUtils.shouldUpRecreateTask(this, upIntent) -> {
+                        TaskStackBuilder.create(this)
+                            .addNextIntentWithParentStack(upIntent)
+                            .startActivities()
+                    }
+                    else -> NavUtils.navigateUpTo(this, upIntent)
+                }
                 true
             }
             R.id.add_to_favorite -> {

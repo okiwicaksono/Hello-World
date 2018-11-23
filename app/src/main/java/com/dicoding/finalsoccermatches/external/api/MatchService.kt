@@ -2,6 +2,7 @@ package com.dicoding.finalsoccermatches.external.api
 
 import com.dicoding.finalsoccermatches.domain.entity.LeagueResponse
 import com.dicoding.finalsoccermatches.domain.entity.MatchResponse
+import com.dicoding.finalsoccermatches.domain.entity.MatchSearchResponse
 import com.dicoding.finalsoccermatches.domain.entity.TeamResponse
 import kotlinx.coroutines.experimental.Deferred
 import retrofit2.http.GET
@@ -22,4 +23,7 @@ interface MatchService {
 
     @GET("api/v1/json/1/all_leagues.php")
     fun getAllLeagues(): Deferred<LeagueResponse>
+
+    @GET("api/v1/json/1/searchevents.php")
+    fun getMatchByKeyword(@Query("e") keyword: String): Deferred<MatchSearchResponse>
 }

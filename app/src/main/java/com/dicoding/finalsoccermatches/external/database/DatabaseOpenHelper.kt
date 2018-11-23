@@ -22,6 +22,7 @@ class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "FavoriteM
         db.createTable(
             Match.MATCH_TABLE, true,
             Match.ID_EVENT to TEXT + PRIMARY_KEY,
+            Match.SPORT to TEXT,
             Match.HOME_TEAM_NAME to TEXT,
             Match.AWAY_TEAM_NAME to TEXT,
             Match.HOME_SCORE to TEXT,

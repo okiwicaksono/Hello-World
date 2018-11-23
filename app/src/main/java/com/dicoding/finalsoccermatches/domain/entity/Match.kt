@@ -6,6 +6,9 @@ data class Match(
     @JsonProperty("idEvent")
     val idEvent: String? = null,
 
+    @JsonProperty("strSport")
+    val strSport: String? = null,
+
     @JsonProperty("strHomeTeam")
     val strHomeTeam: String? = null,
 
@@ -75,6 +78,7 @@ data class Match(
     companion object {
         const val MATCH_TABLE: String = "MATCH_TABLE"
         const val ID_EVENT: String = "idEvent"
+        const val SPORT: String = "strSport"
         const val HOME_TEAM_NAME: String = "strHomeTeam"
         const val AWAY_TEAM_NAME: String = "strAwayTeam"
         const val HOME_SCORE: String = "intHomeScore"
