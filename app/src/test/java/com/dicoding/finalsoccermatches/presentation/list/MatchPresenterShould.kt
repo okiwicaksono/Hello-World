@@ -62,8 +62,8 @@ class MatchPresenterShould {
         repeat(2) { actualStates.add(viewStateChannel.receive()) }
 
         assertEquals(MatchContract.ViewState.LoadingState, actualStates[0])
-        assertTrue(actualStates[1] is MatchContract.ViewState.ResultState)
-        assertEquals(matches.first(), (actualStates[1] as MatchContract.ViewState.ResultState).matches.first())
+        assertTrue(actualStates[1] is MatchContract.ViewState.MatchResultState)
+        assertEquals(matches.first(), (actualStates[1] as MatchContract.ViewState.MatchResultState).matches.first())
     }
 
     @Test
@@ -124,8 +124,8 @@ class MatchPresenterShould {
         repeat(2) { actualStates.add(viewStateChannel.receive()) }
 
         assertEquals(MatchContract.ViewState.LoadingState, actualStates[0])
-        assertTrue(actualStates[1] is MatchContract.ViewState.ResultState)
-        assertEquals(matches.first(), (actualStates[1] as MatchContract.ViewState.ResultState).matches.first())
+        assertTrue(actualStates[1] is MatchContract.ViewState.MatchResultState)
+        assertEquals(matches.first(), (actualStates[1] as MatchContract.ViewState.MatchResultState).matches.first())
     }
 
     @Test

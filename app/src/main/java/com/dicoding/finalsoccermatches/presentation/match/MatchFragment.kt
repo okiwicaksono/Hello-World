@@ -8,11 +8,14 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.dicoding.finalsoccermatches.BuildConfig
 import com.dicoding.finalsoccermatches.R
 import com.dicoding.finalsoccermatches.domain.data.MatchRepository
 import com.dicoding.finalsoccermatches.domain.data.MatchRepositoryImpl
+import com.dicoding.finalsoccermatches.domain.entity.League
 import com.dicoding.finalsoccermatches.domain.entity.MatchType
 import com.dicoding.finalsoccermatches.external.api.MatchService
 import com.dicoding.finalsoccermatches.presentation.detail.DetailActivity
@@ -23,6 +26,7 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.Coroutin
 import kotlinx.android.synthetic.main.fragment_match.*
 import kotlinx.coroutines.experimental.*
 import okhttp3.OkHttpClient
+import org.jetbrains.anko.sdk25.coroutines.onItemSelectedListener
 import org.jetbrains.anko.support.v4.startActivity
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -34,6 +38,7 @@ class MatchFragment : Fragment(), MatchContract.View,
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
     private lateinit var adapter: MatchAdapter
+    private lateinit var spinnerAdapter: ArrayAdapter<League>
     private lateinit var presenter: MatchContract.Presenter
 
     companion object {
@@ -71,7 +76,7 @@ class MatchFragment : Fragment(), MatchContract.View,
         activity?.let {
             initPresenter()
             initView()
-            onRefresh()
+            presenter.loadAllLeagues()
         }
     }
 
@@ -136,7 +141,21 @@ class MatchFragment : Fragment(), MatchContract.View,
             is MatchContract.ViewState.LoadingState -> {
                 swipeRefresh.isRefreshing = true
             }
-            is MatchContract.ViewState.ResultState -> {
+            is MatchContract.ViewState.LeagueResultState -> {
+                activity?.applicationContext?.let {
+                    spinnerAdapter = ArrayAdapter(it, android.R.layout.simple_spinner_item, viewState.leagues)
+                    spinner.adapter = spinnerAdapter
+
+                    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+                        override fun onNothingSelected(parent: AdapterView<*>?) {}
+
+                        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                            onRefresh()
+                        }
+                    }
+                }
+            }
+            is MatchContract.ViewState.MatchResultState -> {
                 swipeRefresh.isRefreshing = false
                 adapter.submitList(viewState.matches)
             }
@@ -150,12 +169,13 @@ class MatchFragment : Fragment(), MatchContract.View,
     override fun onRefresh() {
         activity?.let { activity ->
             arguments?.getString(ARG_TYPE).let {
+                val leagueId = spinnerAdapter.getItem(spinner.selectedItemPosition)?.idLeague ?: "0"
                 when (it) {
                     MatchType.LAST.type -> {
-                        presenter.loadPastMatches()
+                        presenter.loadPastMatches(leagueId)
                     }
                     MatchType.NEXT.type -> {
-                        presenter.loadNextMatches()
+                        presenter.loadNextMatches(leagueId)
                     }
                     MatchType.FAVORITE.type -> {
                         presenter.loadFavoriteMatches(activity)

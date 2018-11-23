@@ -10,6 +10,7 @@ import android.widget.TextView
 import com.dicoding.finalsoccermatches.R
 import com.dicoding.finalsoccermatches.domain.entity.Match
 import com.dicoding.finalsoccermatches.parseToDesiredDate
+import com.dicoding.finalsoccermatches.parseToDesiredTime
 import com.dicoding.finalsoccermatches.visible
 import org.jetbrains.anko.find
 
@@ -35,13 +36,19 @@ class MatchAdapter(private val listener: (Match) -> Unit) :
 
     class MatchViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val date: TextView = view.find(R.id.date)
+        private val time: TextView = view.find(R.id.time)
         private val homeScore: TextView = view.find(R.id.homeScore)
         private val awayScore: TextView = view.find(R.id.awayScore)
         private val homeTeamName: TextView = view.find(R.id.homeTeamName)
         private val awayTeamName: TextView = view.find(R.id.awayTeamName)
 
         fun bind(match: Match) {
-            date.text = match.dateEvent?.let { parseToDesiredDate(it) }
+            match.dateEvent?.let { dateEvent ->
+                match.strTime?.let { strTime ->
+                    date.text = parseToDesiredDate(dateString = dateEvent, timeString = strTime)
+                    time.text = parseToDesiredTime(dateString = dateEvent, timeString = strTime)
+                }
+            }
             match.intHomeScore?.let {
                 homeScore.text = match.intHomeScore
                 homeScore.visible()

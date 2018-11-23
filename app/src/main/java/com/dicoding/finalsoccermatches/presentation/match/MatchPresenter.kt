@@ -16,15 +16,13 @@ class MatchPresenter(
     override fun viewStates(): Channel<MatchContract.ViewState> =
         viewStates
 
-    override fun loadPastMatches() {
+    override fun loadAllLeagues() {
         launch {
             try {
                 viewStates.send(MatchContract.ViewState.LoadingState)
-                val matches = repository.getPastMatches().await()
+                val leagues = repository.getAllLeagues().await()
                 viewStates.send(
-                    MatchContract.ViewState.ResultState(
-                        matches
-                    )
+                    MatchContract.ViewState.LeagueResultState(leagues)
                 )
             } catch (ex: Exception) {
                 if (ex !is CancellationException)
@@ -37,15 +35,32 @@ class MatchPresenter(
         }
     }
 
-    override fun loadNextMatches() {
+    override fun loadPastMatches(leagueId: String) {
         launch {
             try {
                 viewStates.send(MatchContract.ViewState.LoadingState)
-                val matches = repository.getNextMatches().await()
+                val matches = repository.getPastMatches(leagueId).await()
                 viewStates.send(
-                    MatchContract.ViewState.ResultState(
-                        matches
+                    MatchContract.ViewState.MatchResultState(matches)
+                )
+            } catch (ex: Exception) {
+                if (ex !is CancellationException)
+                    viewStates.send(
+                        MatchContract.ViewState.ErrorState(
+                            ex.message ?: ""
+                        )
                     )
+            }
+        }
+    }
+
+    override fun loadNextMatches(leagueId: String) {
+        launch {
+            try {
+                viewStates.send(MatchContract.ViewState.LoadingState)
+                val matches = repository.getNextMatches(leagueId).await()
+                viewStates.send(
+                    MatchContract.ViewState.MatchResultState(matches)
                 )
             } catch (ex: Exception) {
                 if (ex !is CancellationException)
@@ -64,9 +79,7 @@ class MatchPresenter(
                 viewStates.send(MatchContract.ViewState.LoadingState)
                 val matches = repository.getFavoriteMatches(context)
                 viewStates.send(
-                    MatchContract.ViewState.ResultState(
-                        matches
-                    )
+                    MatchContract.ViewState.MatchResultState(matches)
                 )
             } catch (ex: Exception) {
                 if (ex !is CancellationException)

@@ -41,6 +41,18 @@
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="Sat, 27 Oct 2018"/>
 
+                <TextView
+                    android:id="@+id/time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/colorPrimary"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/date"
+                    tools:text="23.45"/>
+
                 <ImageView
                         android:id="@+id/home_badge"
                         android:layout_width="80dp"
@@ -74,7 +86,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.5"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/date"/>
+                        app:layout_constraintTop_toBottomOf="@+id/time"/>
 
                 <TextView
                         android:id="@+id/home_score"

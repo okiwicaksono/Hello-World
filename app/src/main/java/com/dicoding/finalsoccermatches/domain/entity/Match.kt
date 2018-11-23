@@ -67,7 +67,10 @@ data class Match(
     val idAwayTeam: String? = null,
 
     @JsonProperty("dateEvent")
-    val dateEvent: String? = null
+    val dateEvent: String? = null,
+
+    @JsonProperty("strTime")
+    val strTime: String? = null
 ) {
     companion object {
         const val MATCH_TABLE: String = "MATCH_TABLE"
@@ -93,5 +96,6 @@ data class Match(
         const val HOME_TEAM_ID: String = "idHomeTeam"
         const val AWAY_TEAM_ID: String = "idAwayTeam"
         const val EVENT_DATE: String = "dateEvent"
+        const val EVENT_TIME: String = "strTime"
     }
 }

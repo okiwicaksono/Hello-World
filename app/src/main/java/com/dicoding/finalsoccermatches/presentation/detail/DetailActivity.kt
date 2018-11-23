@@ -10,8 +10,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import com.bumptech.glide.Glide
-import com.dicoding.finalsoccermatches.BuildConfig
-import com.dicoding.finalsoccermatches.R
+import com.dicoding.finalsoccermatches.*
 import com.dicoding.finalsoccermatches.R.drawable.ic_add_to_favorites
 import com.dicoding.finalsoccermatches.R.drawable.ic_added_to_favorites
 import com.dicoding.finalsoccermatches.domain.data.MatchRepository
@@ -19,8 +18,6 @@ import com.dicoding.finalsoccermatches.domain.data.MatchRepositoryImpl
 import com.dicoding.finalsoccermatches.domain.entity.Match
 import com.dicoding.finalsoccermatches.external.api.MatchService
 import com.dicoding.finalsoccermatches.external.database.MatchDatabase
-import com.dicoding.finalsoccermatches.formatPlayerList
-import com.dicoding.finalsoccermatches.parseToDesiredDate
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
@@ -119,7 +116,12 @@ class DetailActivity : AppCompatActivity(), DetailContract.View {
     private fun setupMatchToView(match: Match) {
         this.match = match
 
-        date.text = match.dateEvent?.let { parseToDesiredDate(it) }
+        match.dateEvent?.let { dateEvent ->
+            match.strTime?.let { strTime ->
+                date.text = parseToDesiredDate(dateString = dateEvent, timeString = strTime)
+                time.text = parseToDesiredTime(dateString = dateEvent, timeString = strTime)
+            }
+        }
         home_score.text = match.intHomeScore
         away_score.text = match.intAwayScore
         home_team.text = match.strHomeTeam

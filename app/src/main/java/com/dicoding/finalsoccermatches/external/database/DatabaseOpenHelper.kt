@@ -42,7 +42,8 @@ class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "FavoriteM
             Match.AWAY_SUBSTITUTES to TEXT,
             Match.HOME_TEAM_ID to TEXT,
             Match.AWAY_TEAM_ID to TEXT,
-            Match.EVENT_DATE to TEXT
+            Match.EVENT_DATE to TEXT,
+            Match.EVENT_TIME to TEXT
         )
     }
 

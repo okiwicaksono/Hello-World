@@ -36,7 +36,8 @@ class MatchDatabase(private val context: Context) {
             Match.AWAY_SUBSTITUTES to match.strAwayLineupSubstitutes,
             Match.HOME_TEAM_ID to match.idHomeTeam,
             Match.AWAY_TEAM_ID to match.idAwayTeam,
-            Match.EVENT_DATE to match.dateEvent
+            Match.EVENT_DATE to match.dateEvent,
+            Match.EVENT_TIME to match.strTime
         )
     }
 
