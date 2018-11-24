@@ -5,6 +5,8 @@
     <string name="tab_text_3">Favorites</string>
     <string name="last_match">Last</string>
     <string name="next_match">Next</string>
+    <string name="overview">Overview</string>
+    <string name="players">Players</string>
     <string name="search">Search</string>
     <string name="vs">vs</string>
     <string name="match_detail">Match Detail</string>
@@ -20,6 +22,7 @@
     <string name="remove_from_favorite">Removed from favorite</string>
     <string name="event_id">eventId</string>
     <string name="team_id">teamId</string>
+    <string name="player_id">playerId</string>
     <string name="selected_item_id">selectedItemId</string>
     <string name="search_empty_hint">Please enter keyword and press search button</string>
 </resources>

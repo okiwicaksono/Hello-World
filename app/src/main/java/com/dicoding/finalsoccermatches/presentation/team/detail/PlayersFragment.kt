@@ -1,4 +1,4 @@
-package com.dicoding.finalsoccermatches.presentation.team
+package com.dicoding.finalsoccermatches.presentation.team.detail
 
 import android.content.Context
 import android.os.Bundle
@@ -6,23 +6,21 @@ import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
-import android.view.*
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Toast
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.dicoding.finalsoccermatches.BuildConfig
 import com.dicoding.finalsoccermatches.R
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepository
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepositoryImpl
-import com.dicoding.finalsoccermatches.domain.entity.League
 import com.dicoding.finalsoccermatches.external.api.SoccerService
-import com.dicoding.finalsoccermatches.presentation.search.TeamSearchActivity
-import com.dicoding.finalsoccermatches.presentation.team.detail.TeamDetailActivity
+import com.dicoding.finalsoccermatches.presentation.team.TeamContract
+import com.dicoding.finalsoccermatches.presentation.team.TeamPresenter
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
-import kotlinx.android.synthetic.main.fragment_team.*
+import kotlinx.android.synthetic.main.fragment_team_detail_players.*
 import kotlinx.coroutines.experimental.*
 import okhttp3.OkHttpClient
 import org.jetbrains.anko.support.v4.startActivity
@@ -30,14 +28,25 @@ import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import kotlin.coroutines.experimental.CoroutineContext
 
-class TeamFragment : Fragment(), TeamContract.View,
-    SwipeRefreshLayout.OnRefreshListener, CoroutineScope {
+class PlayersFragment : Fragment(), TeamContract.View, SwipeRefreshLayout.OnRefreshListener, CoroutineScope {
     private lateinit var job: Job
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
-    private lateinit var adapter: TeamAdapter
-    private lateinit var spinnerAdapter: ArrayAdapter<League>
+    private lateinit var adapter: PlayerAdapter
     private lateinit var presenter: TeamContract.Presenter
+
+    companion object {
+        private const val TEAM_ID = "team_id"
+
+        fun newInstance(teamId: String): PlayersFragment {
+            val args = Bundle().also {
+                it.putString(TEAM_ID, teamId)
+            }
+            return PlayersFragment().apply {
+                arguments = args
+            }
+        }
+    }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -49,16 +58,11 @@ class TeamFragment : Fragment(), TeamContract.View,
         job.cancel()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_team, container, false)
+        return inflater.inflate(R.layout.fragment_team_detail_players, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,7 +70,8 @@ class TeamFragment : Fragment(), TeamContract.View,
         activity?.let {
             initPresenter()
             initView()
-            presenter.loadAllLeagues()
+
+            onRefresh()
         }
     }
 
@@ -110,8 +115,8 @@ class TeamFragment : Fragment(), TeamContract.View,
     private fun initView() {
         swipeRefresh.setOnRefreshListener(this)
 
-        adapter = TeamAdapter { team ->
-             startActivity<TeamDetailActivity>(getString(R.string.team_id) to team.idTeam)
+        adapter = PlayerAdapter {
+//            startActivity<PlayerDetailActivity>(getString(R.string.player_id) to player.idPlayer)
         }
 
         recyclerView.layoutManager = LinearLayoutManager(activity)
@@ -126,54 +131,25 @@ class TeamFragment : Fragment(), TeamContract.View,
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.search_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.search -> {
-                startActivity<TeamSearchActivity>()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     override fun renderState(viewState: TeamContract.ViewState) {
         when (viewState) {
             is TeamContract.ViewState.LoadingState -> {
                 swipeRefresh.isRefreshing = true
             }
-            is TeamContract.ViewState.LeagueResultState -> {
-                activity?.applicationContext?.let {
-                    spinnerAdapter = ArrayAdapter(it, android.R.layout.simple_spinner_item, viewState.leagues)
-                    spinner.adapter = spinnerAdapter
-
-                    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                        override fun onNothingSelected(parent: AdapterView<*>?) {}
-
-                        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                            onRefresh()
-                        }
-                    }
-                }
-            }
-            is TeamContract.ViewState.TeamsResultState -> {
+            is TeamContract.ViewState.PlayersResultState -> {
                 swipeRefresh.isRefreshing = false
-                adapter.submitList(viewState.teams)
+                adapter.submitList(viewState.players)
             }
             is TeamContract.ViewState.ErrorState -> {
                 swipeRefresh.isRefreshing = false
-                Toast.makeText(activity, viewState.error, Toast.LENGTH_SHORT).show()
                 Log.e("error", viewState.error)
             }
         }
     }
 
     override fun onRefresh() {
-        val leagueId = spinnerAdapter.getItem(spinner.selectedItemPosition)?.idLeague ?: "0"
-        presenter.loadTeams(leagueId)
+        arguments?.getString(TEAM_ID)?.let { teamId ->
+            presenter.loadPlayers(teamId = teamId)
+        }
     }
 }

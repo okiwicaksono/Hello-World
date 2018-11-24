@@ -27,7 +27,7 @@ class MatchDetailPresenter(
         GlobalScope.launch(compositeJob) {
             try {
                 viewStates.send(MatchDetailContract.ViewState.LoadingState)
-                val team = repository.getTeamBadge(teamId).await()
+                val team = repository.getTeamDetails(teamId).await()
                 viewStates.send(MatchDetailContract.ViewState.URLResultState(team.teamBadge, imageView))
             } catch (ex: Exception) {
                 if (ex !is CancellationException)

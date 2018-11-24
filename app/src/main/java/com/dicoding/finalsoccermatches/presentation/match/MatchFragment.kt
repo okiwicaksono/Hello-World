@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import com.dicoding.finalsoccermatches.BuildConfig
 import com.dicoding.finalsoccermatches.R
 import com.dicoding.finalsoccermatches.createCalendarIntent
@@ -33,8 +32,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import kotlin.coroutines.experimental.CoroutineContext
 
-class MatchFragment : Fragment(), MatchContract.View,
-    SwipeRefreshLayout.OnRefreshListener, CoroutineScope {
+class MatchFragment : Fragment(), MatchContract.View, SwipeRefreshLayout.OnRefreshListener, CoroutineScope {
     private lateinit var job: Job
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
@@ -117,8 +115,8 @@ class MatchFragment : Fragment(), MatchContract.View,
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
 
-        val movieService = retrofit.create(SoccerService::class.java)
-        val repository: SoccerRepository = SoccerRepositoryImpl(movieService)
+        val soccerService = retrofit.create(SoccerService::class.java)
+        val repository: SoccerRepository = SoccerRepositoryImpl(soccerService)
 
         presenter = MatchPresenter(repository, this)
     }
@@ -194,7 +192,6 @@ class MatchFragment : Fragment(), MatchContract.View,
             }
             is MatchContract.ViewState.ErrorState -> {
                 swipeRefresh.isRefreshing = false
-                Toast.makeText(activity, viewState.error, Toast.LENGTH_SHORT).show()
                 Log.e("error", viewState.error)
             }
         }

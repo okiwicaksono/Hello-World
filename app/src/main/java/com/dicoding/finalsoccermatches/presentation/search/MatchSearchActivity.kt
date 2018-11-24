@@ -78,8 +78,8 @@ class MatchSearchActivity : AppCompatActivity(), MatchContract.View,
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
 
-        val movieService = retrofit.create(SoccerService::class.java)
-        val repository: SoccerRepository = SoccerRepositoryImpl(movieService)
+        val soccerService = retrofit.create(SoccerService::class.java)
+        val repository: SoccerRepository = SoccerRepositoryImpl(soccerService)
 
         presenter = MatchPresenter(repository, this)
     }

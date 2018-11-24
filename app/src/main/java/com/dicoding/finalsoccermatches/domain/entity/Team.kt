@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class Team(
     @JsonProperty("idTeam")
-    val idTeam: String? = "",
+    val idTeam: String = "",
 
     @JsonProperty("strTeam")
     val strTeam: String? = "",

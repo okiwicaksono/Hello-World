@@ -38,9 +38,9 @@ class TeamPresenter(
         launch {
             try {
                 viewStates.send(TeamContract.ViewState.LoadingState)
-                val teams = repository.getTeam(leagueId).await()
+                val teams = repository.getTeams(leagueId).await()
                 viewStates.send(
-                    TeamContract.ViewState.TeamResultState(teams)
+                    TeamContract.ViewState.TeamsResultState(teams)
                 )
             } catch (ex: Exception) {
                 if (ex !is CancellationException)
@@ -59,9 +59,47 @@ class TeamPresenter(
                 viewStates.send(TeamContract.ViewState.LoadingState)
                 val teams = repository.getTeamsByKeyword(keyword).await()
                 viewStates.send(
-                    TeamContract.ViewState.TeamResultState(teams.filter { team ->
+                    TeamContract.ViewState.TeamsResultState(teams.filter { team ->
                         team.strSport == "Soccer"
                     })
+                )
+            } catch (ex: Exception) {
+                if (ex !is CancellationException)
+                    viewStates.send(
+                        TeamContract.ViewState.ErrorState(
+                            ex.message ?: ""
+                        )
+                    )
+            }
+        }
+    }
+
+    override fun loadPlayers(teamId: String) {
+        launch {
+            try {
+                viewStates.send(TeamContract.ViewState.LoadingState)
+                val teams = repository.getPlayers(teamId).await()
+                viewStates.send(
+                    TeamContract.ViewState.PlayersResultState(teams)
+                )
+            } catch (ex: Exception) {
+                if (ex !is CancellationException)
+                    viewStates.send(
+                        TeamContract.ViewState.ErrorState(
+                            ex.message ?: ""
+                        )
+                    )
+            }
+        }
+    }
+
+    override fun loadTeamDetails(teamId: String) {
+        launch {
+            try {
+                viewStates.send(TeamContract.ViewState.LoadingState)
+                val team = repository.getTeamDetails(teamId).await()
+                viewStates.send(
+                    TeamContract.ViewState.TeamDetailsResultState(team)
                 )
             } catch (ex: Exception) {
                 if (ex !is CancellationException)

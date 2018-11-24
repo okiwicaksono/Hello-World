@@ -108,8 +108,8 @@ class MatchDetailActivity : AppCompatActivity(), MatchDetailContract.View {
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
 
-        val movieService = retrofit.create(SoccerService::class.java)
-        val repository: SoccerRepository = SoccerRepositoryImpl(movieService)
+        val soccerService = retrofit.create(SoccerService::class.java)
+        val repository: SoccerRepository = SoccerRepositoryImpl(soccerService)
 
         presenter = MatchDetailPresenter(repository)
         presenter.loadMatchDetail(eventId)

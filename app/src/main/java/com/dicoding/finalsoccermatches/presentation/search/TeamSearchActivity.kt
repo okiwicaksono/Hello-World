@@ -8,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.Menu
-import android.widget.Toast
 import com.dicoding.finalsoccermatches.BuildConfig
 import com.dicoding.finalsoccermatches.R
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepository
@@ -81,8 +80,8 @@ class TeamSearchActivity : AppCompatActivity(), TeamContract.View,
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
 
-        val movieService = retrofit.create(SoccerService::class.java)
-        val repository: SoccerRepository = SoccerRepositoryImpl(movieService)
+        val soccerService = retrofit.create(SoccerService::class.java)
+        val repository: SoccerRepository = SoccerRepositoryImpl(soccerService)
 
         presenter = TeamPresenter(repository, this)
     }
@@ -122,7 +121,7 @@ class TeamSearchActivity : AppCompatActivity(), TeamContract.View,
             is TeamContract.ViewState.LoadingState -> {
                 swipeRefresh.isRefreshing = true
             }
-            is TeamContract.ViewState.TeamResultState -> {
+            is TeamContract.ViewState.TeamsResultState -> {
                 swipeRefresh.isRefreshing = false
                 if (viewState.teams.isEmpty()) {
                     emptyView.text = "No data for ${searchView.query}"
