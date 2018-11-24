@@ -1,6 +1,5 @@
 package com.dicoding.finalsoccermatches.presentation.match
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
@@ -23,25 +22,21 @@ import com.dicoding.finalsoccermatches.presentation.search.MatchSearchActivity
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.android.synthetic.main.fragment_match.*
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import org.jetbrains.anko.support.v4.startActivity
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
-import kotlin.coroutines.experimental.CoroutineContext
 
-class MatchFragment : Fragment(), MatchContract.View, SwipeRefreshLayout.OnRefreshListener, CoroutineScope {
-    private lateinit var job: Job
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
+class MatchFragment : Fragment(), MatchContract.View, SwipeRefreshLayout.OnRefreshListener {
     private lateinit var adapter: MatchAdapter
     private lateinit var spinnerAdapter: ArrayAdapter<League>
     private lateinit var presenter: MatchContract.Presenter
 
     companion object {
-        lateinit var presenter: MatchContract.Presenter
         private const val ARG_TYPE = "match_type"
 
         fun newInstance(matchType: MatchType): MatchFragment {
@@ -54,19 +49,12 @@ class MatchFragment : Fragment(), MatchContract.View, SwipeRefreshLayout.OnRefre
         }
     }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        job = Job()
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        job.cancel()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        activity?.applicationContext?.let {
+            spinnerAdapter = ArrayAdapter(it, android.R.layout.simple_spinner_item, emptyArray<League>())
+        }
     }
 
     override fun onCreateView(
@@ -86,7 +74,6 @@ class MatchFragment : Fragment(), MatchContract.View, SwipeRefreshLayout.OnRefre
     }
 
     private fun initPresenter() {
-        Companion.presenter.let { this.presenter = it }
         if (this::presenter.isInitialized) return
 
         val objectMapper = ObjectMapper()
@@ -120,7 +107,7 @@ class MatchFragment : Fragment(), MatchContract.View, SwipeRefreshLayout.OnRefre
         val soccerService = retrofit.create(SoccerService::class.java)
         val repository: SoccerRepository = SoccerRepositoryImpl(soccerService)
 
-        presenter = MatchPresenter(repository, this)
+        presenter = MatchPresenter(repository)
     }
 
     private fun initView() {
@@ -200,10 +187,10 @@ class MatchFragment : Fragment(), MatchContract.View, SwipeRefreshLayout.OnRefre
     }
 
     override fun onRefresh() {
-        activity?.let { activity ->
-            arguments?.getString(ARG_TYPE).let {
+        activity?.let {
+            arguments?.getString(ARG_TYPE).let { matchType ->
                 val leagueId = spinnerAdapter.getItem(spinner.selectedItemPosition)?.idLeague ?: "0"
-                when (it) {
+                when (matchType) {
                     MatchType.LAST.type -> {
                         presenter.loadPastMatches(leagueId)
                     }

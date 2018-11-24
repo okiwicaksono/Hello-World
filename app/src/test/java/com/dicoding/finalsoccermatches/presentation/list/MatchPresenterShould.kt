@@ -4,8 +4,7 @@ import com.dicoding.finalsoccermatches.domain.data.SoccerRepository
 import com.dicoding.finalsoccermatches.domain.entity.Match
 import com.dicoding.finalsoccermatches.presentation.match.MatchContract
 import com.dicoding.finalsoccermatches.presentation.match.MatchPresenter
-import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.test.TestCoroutineContext
+import kotlinx.coroutines.*
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -18,7 +17,7 @@ import org.mockito.Mockito.`when` as whenever
 class MatchPresenterShould {
 
     private val repository = Mockito.mock(SoccerRepository::class.java)
-    private val presenter = MatchPresenter(repository, CoroutineScope(Job() + Dispatchers.Unconfined))
+    private val presenter = MatchPresenter(repository)
 
     @Test
     fun send_result_when_load_past_matches_success() = runBlocking {
@@ -57,6 +56,7 @@ class MatchPresenterShould {
         }
 
         val actualStates = mutableListOf<MatchContract.ViewState>()
+
         repeat(2) { actualStates.add(viewStateChannel.receive()) }
 
         assertEquals(MatchContract.ViewState.LoadingState, actualStates[0])

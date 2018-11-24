@@ -8,9 +8,9 @@ import com.dicoding.finalsoccermatches.domain.entity.Team
 import com.dicoding.finalsoccermatches.external.api.SoccerService
 import com.dicoding.finalsoccermatches.external.database.MatchDatabase
 import com.dicoding.finalsoccermatches.external.database.TeamDatabase
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 
 interface SoccerRepository {
     fun getAllLeagues(): Deferred<List<League>>

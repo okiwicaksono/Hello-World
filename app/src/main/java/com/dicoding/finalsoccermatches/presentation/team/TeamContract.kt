@@ -4,7 +4,7 @@ import android.arch.lifecycle.ViewModel
 import com.dicoding.finalsoccermatches.domain.entity.League
 import com.dicoding.finalsoccermatches.domain.entity.Player
 import com.dicoding.finalsoccermatches.domain.entity.Team
-import kotlinx.coroutines.experimental.channels.Channel
+import kotlinx.coroutines.channels.Channel
 
 interface TeamContract {
     abstract class Presenter : ViewModel() {

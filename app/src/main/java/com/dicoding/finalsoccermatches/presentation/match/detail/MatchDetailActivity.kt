@@ -20,16 +20,16 @@ import com.dicoding.finalsoccermatches.external.database.MatchDatabase
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.android.synthetic.main.activity_detail.*
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.CoroutineContext
 
 class MatchDetailActivity : AppCompatActivity(), MatchDetailContract.View, CoroutineScope {
     private lateinit var job: Job
@@ -39,10 +39,6 @@ class MatchDetailActivity : AppCompatActivity(), MatchDetailContract.View, Corou
     private var isFavorite: Boolean = false
     private lateinit var presenter: MatchDetailContract.Presenter
     private lateinit var match: Match
-
-    companion object {
-        lateinit var presenter: MatchDetailContract.Presenter
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,7 +88,6 @@ class MatchDetailActivity : AppCompatActivity(), MatchDetailContract.View, Corou
     }
 
     private fun initPresenter(eventId: String) {
-        Companion.presenter.let { this.presenter = it }
         if (this::presenter.isInitialized) return
 
         val objectMapper = ObjectMapper()

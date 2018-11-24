@@ -4,7 +4,7 @@ import android.arch.lifecycle.ViewModel
 import android.content.Context
 import com.dicoding.finalsoccermatches.domain.entity.League
 import com.dicoding.finalsoccermatches.domain.entity.Match
-import kotlinx.coroutines.experimental.channels.Channel
+import kotlinx.coroutines.channels.Channel
 
 interface MatchContract {
     abstract class Presenter : ViewModel() {

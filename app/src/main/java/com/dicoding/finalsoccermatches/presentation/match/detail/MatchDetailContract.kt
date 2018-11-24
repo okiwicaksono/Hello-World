@@ -3,7 +3,7 @@ package com.dicoding.finalsoccermatches.presentation.match.detail
 import android.arch.lifecycle.ViewModel
 import android.widget.ImageView
 import com.dicoding.finalsoccermatches.domain.entity.Match
-import kotlinx.coroutines.experimental.channels.Channel
+import kotlinx.coroutines.channels.Channel
 
 interface MatchDetailContract {
     abstract class Presenter : ViewModel() {

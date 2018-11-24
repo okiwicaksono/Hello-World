@@ -1,23 +1,29 @@
 package com.dicoding.finalsoccermatches.presentation.match
 
-import android.content.Context
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepository
-import kotlinx.coroutines.experimental.CancellationException
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.channels.Channel
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 
 class MatchPresenter(
-    private val repository: SoccerRepository,
-    scope: CoroutineScope
-) : MatchContract.Presenter(), CoroutineScope by scope {
+    private val repository: SoccerRepository
+) : MatchContract.Presenter() {
+    private val job = Job()
+        get() {
+            return if (field.isCancelled)
+                Job()
+            else field
+        }
+
     private val viewStates = Channel<MatchContract.ViewState>()
 
     override fun viewStates(): Channel<MatchContract.ViewState> =
         viewStates
 
     override fun loadAllLeagues() {
-        launch {
+        GlobalScope.launch(job) {
             try {
                 viewStates.send(MatchContract.ViewState.LoadingState)
                 val leagues = repository.getAllLeagues().await()
@@ -36,7 +42,7 @@ class MatchPresenter(
     }
 
     override fun loadPastMatches(leagueId: String) {
-        launch {
+        GlobalScope.launch(job) {
             try {
                 viewStates.send(MatchContract.ViewState.LoadingState)
                 val matches = repository.getPastMatches(leagueId).await()
@@ -55,7 +61,7 @@ class MatchPresenter(
     }
 
     override fun loadNextMatches(leagueId: String) {
-        launch {
+        GlobalScope.launch(job) {
             try {
                 viewStates.send(MatchContract.ViewState.LoadingState)
                 val matches = repository.getNextMatches(leagueId).await()
@@ -74,7 +80,7 @@ class MatchPresenter(
     }
 
     override fun loadMatchesByKeyword(keyword: String) {
-        launch {
+        GlobalScope.launch(job) {
             try {
                 viewStates.send(MatchContract.ViewState.LoadingState)
                 val matches = repository.getMatchesByKeyword(keyword).await()

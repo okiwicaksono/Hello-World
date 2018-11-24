@@ -6,8 +6,8 @@ import com.dicoding.finalsoccermatches.util.loadJSON
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
-import kotlinx.coroutines.experimental.runBlocking
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -55,6 +55,8 @@ class SoccerServiceShould {
         val expectedMatches = listOf(
             Match(
                 idEvent = "576588",
+                strEvent = "Chelsea vs Everton",
+                strSport = "Soccer",
                 strHomeTeam = "Chelsea",
                 strAwayTeam = "Everton",
                 intHomeScore = "0",
@@ -74,6 +76,7 @@ class SoccerServiceShould {
                 intHomeShots = "4",
                 intAwayShots = "1",
                 dateEvent = "2018-11-11",
+                strTime = "14:15:00+00:00",
                 idHomeTeam = "133610",
                 idAwayTeam = "133615"
             )
@@ -104,10 +107,12 @@ class SoccerServiceShould {
         val expectedMatches = listOf(
             Match(
                 idEvent = "576590",
+                strEvent = "Tottenham vs Chelsea",
+                strSport = "Soccer",
                 strHomeTeam = "Tottenham",
                 strAwayTeam = "Chelsea",
-                intHomeScore = "0",
-                intAwayScore = "0",
+                intHomeScore = null,
+                intAwayScore = null,
                 strHomeGoalDetails = null,
                 strHomeLineupGoalkeeper = null,
                 strHomeLineupDefense = null,
@@ -120,9 +125,10 @@ class SoccerServiceShould {
                 strAwayLineupMidfield = null,
                 strAwayLineupForward = null,
                 strAwayLineupSubstitutes = null,
-                intHomeShots = "0",
-                intAwayShots = "0",
+                intHomeShots = null,
+                intAwayShots = null,
                 dateEvent = "2018-11-24",
+                strTime = "17:30:00+00:00",
                 idHomeTeam = "133616",
                 idAwayTeam = "133610"
             )

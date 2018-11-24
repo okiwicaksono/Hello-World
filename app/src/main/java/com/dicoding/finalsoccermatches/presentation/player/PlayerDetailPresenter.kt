@@ -1,10 +1,10 @@
 package com.dicoding.finalsoccermatches.presentation.player
 
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepository
-import kotlinx.coroutines.experimental.CancellationException
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.channels.Channel
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 
 class PlayerDetailPresenter(
     private val repository: SoccerRepository,

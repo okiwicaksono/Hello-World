@@ -2,10 +2,9 @@ package com.dicoding.finalsoccermatches.presentation.favorite
 
 import android.arch.lifecycle.ViewModel
 import android.content.Context
-import com.dicoding.finalsoccermatches.domain.entity.League
 import com.dicoding.finalsoccermatches.domain.entity.Match
 import com.dicoding.finalsoccermatches.domain.entity.Team
-import kotlinx.coroutines.experimental.channels.Channel
+import kotlinx.coroutines.channels.Channel
 
 interface FavoriteContract {
     abstract class Presenter : ViewModel() {

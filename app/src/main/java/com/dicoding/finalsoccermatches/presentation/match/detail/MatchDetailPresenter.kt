@@ -2,8 +2,8 @@ package com.dicoding.finalsoccermatches.presentation.match.detail
 
 import android.widget.ImageView
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepository
-import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.channels.Channel
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 
 class MatchDetailPresenter(
     private val repository: SoccerRepository,

@@ -3,8 +3,8 @@ package com.dicoding.finalsoccermatches.domain.data
 import com.dicoding.finalsoccermatches.domain.entity.Match
 import com.dicoding.finalsoccermatches.domain.entity.MatchResponse
 import com.dicoding.finalsoccermatches.external.api.SoccerService
-import kotlinx.coroutines.experimental.CompletableDeferred
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith

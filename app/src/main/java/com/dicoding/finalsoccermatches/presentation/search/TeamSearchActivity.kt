@@ -26,14 +26,14 @@ import com.dicoding.finalsoccermatches.visible
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.android.synthetic.main.activity_team_search.*
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import org.jetbrains.anko.startActivity
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.CoroutineContext
 
 class TeamSearchActivity : AppCompatActivity(), TeamContract.View,
     SwipeRefreshLayout.OnRefreshListener, CoroutineScope {

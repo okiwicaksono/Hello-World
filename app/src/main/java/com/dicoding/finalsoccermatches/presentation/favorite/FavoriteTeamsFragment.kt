@@ -19,14 +19,14 @@ import com.dicoding.finalsoccermatches.presentation.team.detail.TeamDetailActivi
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.android.synthetic.main.fragment_favorite_team.*
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import org.jetbrains.anko.support.v4.startActivity
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.CoroutineContext
 
 class FavoriteTeamsFragment : Fragment(), FavoriteContract.View, SwipeRefreshLayout.OnRefreshListener,
     CoroutineScope {

@@ -1,7 +1,7 @@
 package com.dicoding.finalsoccermatches.external.api
 
 import com.dicoding.finalsoccermatches.domain.entity.*
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Query
 

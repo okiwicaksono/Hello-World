@@ -2,7 +2,7 @@ package com.dicoding.finalsoccermatches.presentation.player
 
 import android.arch.lifecycle.ViewModel
 import com.dicoding.finalsoccermatches.domain.entity.Player
-import kotlinx.coroutines.experimental.channels.Channel
+import kotlinx.coroutines.channels.Channel
 
 interface PlayerDetailContract {
     abstract class Presenter : ViewModel() {

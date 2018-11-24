@@ -1,10 +1,7 @@
 package com.dicoding.finalsoccermatches.presentation.search
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.NavUtils
-import android.support.v4.app.TaskStackBuilder
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -12,32 +9,28 @@ import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import com.dicoding.finalsoccermatches.*
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepository
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepositoryImpl
 import com.dicoding.finalsoccermatches.external.api.SoccerService
-import com.dicoding.finalsoccermatches.presentation.match.detail.MatchDetailActivity
 import com.dicoding.finalsoccermatches.presentation.match.MatchAdapter
 import com.dicoding.finalsoccermatches.presentation.match.MatchContract
 import com.dicoding.finalsoccermatches.presentation.match.MatchPresenter
+import com.dicoding.finalsoccermatches.presentation.match.detail.MatchDetailActivity
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.android.synthetic.main.activity_match_search.*
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import org.jetbrains.anko.startActivity
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
-import kotlin.coroutines.experimental.CoroutineContext
 
 class MatchSearchActivity : AppCompatActivity(), MatchContract.View,
-    SwipeRefreshLayout.OnRefreshListener, CoroutineScope {
-    private lateinit var job: Job
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
+    SwipeRefreshLayout.OnRefreshListener {
     private lateinit var adapter: MatchAdapter
     private lateinit var presenter: MatchContract.Presenter
     private lateinit var searchView: SearchView
@@ -87,7 +80,7 @@ class MatchSearchActivity : AppCompatActivity(), MatchContract.View,
         val soccerService = retrofit.create(SoccerService::class.java)
         val repository: SoccerRepository = SoccerRepositoryImpl(soccerService)
 
-        presenter = MatchPresenter(repository, this)
+        presenter = MatchPresenter(repository)
     }
 
     private fun initView() {
@@ -119,16 +112,6 @@ class MatchSearchActivity : AppCompatActivity(), MatchContract.View,
                 }
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        job = Job()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
     }
 
     @SuppressLint("SetTextI18n")
