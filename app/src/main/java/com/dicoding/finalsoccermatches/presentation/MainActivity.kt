@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import com.dicoding.finalsoccermatches.R
 import com.dicoding.finalsoccermatches.domain.entity.MatchType
+import com.dicoding.finalsoccermatches.presentation.favorite.FavoriteFragment
 import com.dicoding.finalsoccermatches.presentation.match.MatchFragment
 import com.dicoding.finalsoccermatches.presentation.match.MatchParentFragment
 import com.dicoding.finalsoccermatches.presentation.search.MatchSearchActivity
@@ -68,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                 .beginTransaction()
                 .replace(
                     R.id.main_container,
-                    MatchFragment.newInstance(MatchType.FAVORITE),
+                    FavoriteFragment(),
                     MatchFragment::class.java.simpleName
                 )
                 .commit()

@@ -4,9 +4,8 @@ import com.dicoding.finalsoccermatches.domain.data.SoccerRepository
 import com.dicoding.finalsoccermatches.domain.entity.Match
 import com.dicoding.finalsoccermatches.presentation.match.MatchContract
 import com.dicoding.finalsoccermatches.presentation.match.MatchPresenter
-import kotlinx.coroutines.experimental.CompletableDeferred
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.test.TestCoroutineContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -19,8 +18,7 @@ import org.mockito.Mockito.`when` as whenever
 class MatchPresenterShould {
 
     private val repository = Mockito.mock(SoccerRepository::class.java)
-
-    private val presenter = MatchPresenter(repository)
+    private val presenter = MatchPresenter(repository, CoroutineScope(Job() + Dispatchers.Unconfined))
 
     @Test
     fun send_result_when_load_past_matches_success() = runBlocking {
@@ -50,12 +48,12 @@ class MatchPresenterShould {
                 idAwayTeam = "133615"
             )
         )
-        whenever(repository.getPastMatches())
+        whenever(repository.getPastMatches(leagueId))
             .thenReturn(CompletableDeferred(matches))
 
         val viewStateChannel = presenter.viewStates()
         launch {
-            presenter.loadPastMatches()
+            presenter.loadPastMatches(leagueId)
         }
 
         val actualStates = mutableListOf<MatchContract.ViewState>()
@@ -68,12 +66,12 @@ class MatchPresenterShould {
 
     @Test
     fun send_error_state_when_load_past_matches_failed() = runBlocking {
-        whenever(repository.getPastMatches())
+        whenever(repository.getPastMatches(leagueId))
             .thenThrow(IllegalArgumentException("error"))
 
         val viewStateChannel = presenter.viewStates()
         launch {
-            presenter.loadPastMatches()
+            presenter.loadPastMatches(leagueId)
         }
 
         val actualStates = mutableListOf<MatchContract.ViewState>()
@@ -112,12 +110,12 @@ class MatchPresenterShould {
                 idAwayTeam = "133610"
             )
         )
-        whenever(repository.getNextMatches())
+        whenever(repository.getNextMatches(leagueId))
             .thenReturn(CompletableDeferred(matches))
 
         val viewStateChannel = presenter.viewStates()
         launch {
-            presenter.loadNextMatches()
+            presenter.loadNextMatches(leagueId)
         }
 
         val actualStates = mutableListOf<MatchContract.ViewState>()
@@ -130,12 +128,12 @@ class MatchPresenterShould {
 
     @Test
     fun send_error_state_when_load_next_matches_failed() = runBlocking {
-        whenever(repository.getNextMatches())
+        whenever(repository.getNextMatches(leagueId))
             .thenThrow(IllegalArgumentException("error"))
 
         val viewStateChannel = presenter.viewStates()
         launch {
-            presenter.loadNextMatches()
+            presenter.loadNextMatches(leagueId)
         }
 
         val actualStates = mutableListOf<MatchContract.ViewState>()
@@ -144,5 +142,9 @@ class MatchPresenterShould {
         assertEquals(MatchContract.ViewState.LoadingState, actualStates[0])
         assertTrue(actualStates[1] is MatchContract.ViewState.ErrorState)
         assertEquals("error", (actualStates[1] as MatchContract.ViewState.ErrorState).error)
+    }
+
+    companion object {
+        const val leagueId = "4328"
     }
 }

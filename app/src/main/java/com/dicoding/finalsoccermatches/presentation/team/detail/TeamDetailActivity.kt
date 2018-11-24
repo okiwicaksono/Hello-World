@@ -1,20 +1,24 @@
 package com.dicoding.finalsoccermatches.presentation.team.detail
 
-import android.content.Intent
+import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
-import android.support.v4.app.NavUtils
-import android.support.v4.app.TaskStackBuilder
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import com.bumptech.glide.Glide
 import com.dicoding.finalsoccermatches.BuildConfig
 import com.dicoding.finalsoccermatches.R
+import com.dicoding.finalsoccermatches.R.drawable.ic_add_to_favorites
+import com.dicoding.finalsoccermatches.R.drawable.ic_added_to_favorites
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepository
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepositoryImpl
 import com.dicoding.finalsoccermatches.domain.entity.Team
 import com.dicoding.finalsoccermatches.external.api.SoccerService
+import com.dicoding.finalsoccermatches.external.database.TeamDatabase
 import com.dicoding.finalsoccermatches.presentation.team.TeamContract
 import com.dicoding.finalsoccermatches.presentation.team.TeamPresenter
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -34,6 +38,9 @@ class TeamDetailActivity : AppCompatActivity(),
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
     private lateinit var presenter: TeamContract.Presenter
+    private var menuItem: Menu? = null
+    private var isFavorite: Boolean = false
+    private lateinit var team: Team
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +54,7 @@ class TeamDetailActivity : AppCompatActivity(),
         initView()
 
         val teamId = intent.getStringExtra(getString(R.string.team_id))
-
+        checkFavoriteState(teamId)
         presenter.loadTeamDetails(teamId)
     }
 
@@ -104,6 +111,8 @@ class TeamDetailActivity : AppCompatActivity(),
     }
 
     private fun setupView(team: Team) {
+        this.team = team
+
         Glide.with(this).load(team.teamBadge).into(image)
         name.text = team.strTeam
         year.text = team.intFormedYear.toString()
@@ -138,13 +147,63 @@ class TeamDetailActivity : AppCompatActivity(),
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.detail_menu, menu)
+        menuItem = menu
+        setFavorite()
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
                 onBackPressed()
                 true
             }
+            R.id.add_to_favorite -> {
+                if (isFavorite) removeFromFavorite() else addToFavorite()
+                isFavorite = !isFavorite
+                setFavorite()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun checkFavoriteState(teamId: String) {
+        try {
+            val team = TeamDatabase(this).select(teamId.toInt())
+            team?.let {
+                isFavorite = true
+            }
+            setFavorite()
+        } catch (e: Exception) {
+            Snackbar.make(container, e.localizedMessage, Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun setFavorite() {
+        menuItem?.getItem(0)?.icon = if (isFavorite)
+            ContextCompat.getDrawable(this, ic_added_to_favorites)
+        else
+            ContextCompat.getDrawable(this, ic_add_to_favorites)
+    }
+
+    private fun addToFavorite() {
+        try {
+            TeamDatabase(this).create(team)
+            Snackbar.make(container, getString(R.string.added_to_favorite), Snackbar.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Snackbar.make(container, e.localizedMessage, Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun removeFromFavorite() {
+        try {
+            team.idTeam.toInt().let { TeamDatabase(this).delete(it) }
+            Snackbar.make(container, getString(R.string.remove_from_favorite), Snackbar.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Snackbar.make(container, e.localizedMessage, Snackbar.LENGTH_SHORT).show()
         }
     }
 }

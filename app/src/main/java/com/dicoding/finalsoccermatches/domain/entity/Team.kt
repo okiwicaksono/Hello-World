@@ -10,7 +10,7 @@ data class Team(
     val strTeam: String? = "",
 
     @JsonProperty("intFormedYear")
-    val intFormedYear: Int = 0,
+    val intFormedYear: String = "",
 
     @JsonProperty("strSport")
     val strSport: String? = "",
@@ -23,4 +23,15 @@ data class Team(
 
     @JsonProperty("strTeamBadge")
     val teamBadge: String = ""
-)
+) {
+    companion object {
+        const val TEAM_TABLE: String = "TEAM_TABLE"
+        const val ID_TEAM: String = "idTeam"
+        const val TEAM: String = "strTeam"
+        const val FORMED_YEAR: String = "intFormedYear"
+        const val SPORT: String = "strSport"
+        const val STADIUM: String = "strStadium"
+        const val DESCRIPTION: String = "strDescriptionEN"
+        const val TEAM_BADGE: String = "strTeamBadge"
+    }
+}

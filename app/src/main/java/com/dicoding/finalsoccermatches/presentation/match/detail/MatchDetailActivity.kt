@@ -37,8 +37,12 @@ class MatchDetailActivity : AppCompatActivity(), MatchDetailContract.View, Corou
         get() = job + Dispatchers.Main
     private var menuItem: Menu? = null
     private var isFavorite: Boolean = false
-    private lateinit var presenter: MatchDetailPresenter
+    private lateinit var presenter: MatchDetailContract.Presenter
     private lateinit var match: Match
+
+    companion object {
+        lateinit var presenter: MatchDetailContract.Presenter
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +92,7 @@ class MatchDetailActivity : AppCompatActivity(), MatchDetailContract.View, Corou
     }
 
     private fun initPresenter(eventId: String) {
+        Companion.presenter.let { this.presenter = it }
         if (this::presenter.isInitialized) return
 
         val objectMapper = ObjectMapper()

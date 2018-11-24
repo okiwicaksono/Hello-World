@@ -73,25 +73,6 @@ class MatchPresenter(
         }
     }
 
-    override fun loadFavoriteMatches(context: Context) {
-        launch {
-            try {
-                viewStates.send(MatchContract.ViewState.LoadingState)
-                val matches = repository.getFavoriteMatches(context)
-                viewStates.send(
-                    MatchContract.ViewState.MatchResultState(matches)
-                )
-            } catch (ex: Exception) {
-                if (ex !is CancellationException)
-                    viewStates.send(
-                        MatchContract.ViewState.ErrorState(
-                            ex.message ?: ""
-                        )
-                    )
-            }
-        }
-    }
-
     override fun loadMatchesByKeyword(keyword: String) {
         launch {
             try {

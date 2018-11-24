@@ -1,18 +1,17 @@
-package com.dicoding.finalsoccermatches.presentation.match
+package com.dicoding.finalsoccermatches.presentation.favorite
 
 import android.arch.lifecycle.ViewModel
 import android.content.Context
 import com.dicoding.finalsoccermatches.domain.entity.League
 import com.dicoding.finalsoccermatches.domain.entity.Match
+import com.dicoding.finalsoccermatches.domain.entity.Team
 import kotlinx.coroutines.experimental.channels.Channel
 
-interface MatchContract {
+interface FavoriteContract {
     abstract class Presenter : ViewModel() {
         abstract fun viewStates(): Channel<ViewState>
-        abstract fun loadAllLeagues()
-        abstract fun loadPastMatches(leagueId: String)
-        abstract fun loadNextMatches(leagueId: String)
-        abstract fun loadMatchesByKeyword(keyword: String)
+        abstract fun loadFavoriteMatches(context: Context)
+        abstract fun loadFavoriteTeams(context: Context)
     }
 
     interface View {
@@ -21,8 +20,8 @@ interface MatchContract {
 
     sealed class ViewState {
         object LoadingState : ViewState()
-        data class LeagueResultState(val leagues: List<League>) : ViewState()
-        data class MatchResultState(val matches: List<Match>) : ViewState()
+        data class MatchesResultState(val matches: List<Match>) : ViewState()
+        data class TeamsResultState(val teams: List<Team>) : ViewState()
         class ErrorState(val error: String) : ViewState()
     }
 }

@@ -7,6 +7,7 @@ import com.dicoding.finalsoccermatches.domain.entity.Player
 import com.dicoding.finalsoccermatches.domain.entity.Team
 import com.dicoding.finalsoccermatches.external.api.SoccerService
 import com.dicoding.finalsoccermatches.external.database.MatchDatabase
+import com.dicoding.finalsoccermatches.external.database.TeamDatabase
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
@@ -15,7 +16,6 @@ interface SoccerRepository {
     fun getAllLeagues(): Deferred<List<League>>
     fun getPastMatches(leagueId: String): Deferred<List<Match>>
     fun getNextMatches(leagueId: String): Deferred<List<Match>>
-    fun getFavoriteMatches(context: Context): List<Match>
     fun getMatchDetails(eventId: String): Deferred<Match>
     fun getMatchesByKeyword(keyword: String): Deferred<List<Match>>
     fun getTeams(leagueId: String): Deferred<List<Team>>
@@ -23,6 +23,8 @@ interface SoccerRepository {
     fun getTeamDetails(teamId: String): Deferred<Team>
     fun getPlayers(teamId: String): Deferred<List<Player>>
     fun getPlayerDetails(playerId: String): Deferred<Player>
+    fun getFavoriteMatches(context: Context): List<Match>
+    fun getFavoriteTeams(context: Context): List<Team>
 }
 
 class SoccerRepositoryImpl(
@@ -42,9 +44,6 @@ class SoccerRepositoryImpl(
         GlobalScope.async {
             service.getNextMatches(leagueId).await().matches
         }
-
-    override fun getFavoriteMatches(context: Context): List<Match> =
-        MatchDatabase(context).findAll()
 
     override fun getTeamDetails(teamId: String): Deferred<Team> =
         GlobalScope.async {
@@ -80,4 +79,10 @@ class SoccerRepositoryImpl(
         GlobalScope.async {
             service.getPlayerDetails(playerId).await().players.first()
         }
+
+    override fun getFavoriteMatches(context: Context): List<Match> =
+        MatchDatabase(context).findAll()
+
+    override fun getFavoriteTeams(context: Context): List<Team> =
+        TeamDatabase(context).findAll()
 }

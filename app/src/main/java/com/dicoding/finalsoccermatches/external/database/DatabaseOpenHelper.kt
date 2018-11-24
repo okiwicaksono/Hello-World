@@ -3,9 +3,10 @@ package com.dicoding.finalsoccermatches.external.database
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.dicoding.finalsoccermatches.domain.entity.Match
+import com.dicoding.finalsoccermatches.domain.entity.Team
 import org.jetbrains.anko.db.*
 
-class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "FavoriteMatches.db", null, 1) {
+class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "Favorites.db", null, 1) {
     companion object {
         private var instance: DatabaseOpenHelper? = null
 
@@ -47,10 +48,21 @@ class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "FavoriteM
             Match.EVENT_DATE to TEXT,
             Match.EVENT_TIME to TEXT
         )
+        db.createTable(
+            Team.TEAM_TABLE, true,
+            Team.ID_TEAM to TEXT + PRIMARY_KEY,
+            Team.TEAM to TEXT,
+            Team.FORMED_YEAR to TEXT,
+            Team.SPORT to TEXT,
+            Team.STADIUM to TEXT,
+            Team.DESCRIPTION to TEXT,
+            Team.TEAM_BADGE to TEXT
+        )
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.dropTable(Match.MATCH_TABLE, true)
+        db.dropTable(Team.TEAM_TABLE, true)
     }
 }
 
