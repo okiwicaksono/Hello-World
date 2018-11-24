@@ -22,6 +22,7 @@ interface SoccerRepository {
     fun getTeamsByKeyword(keyword: String): Deferred<List<Team>>
     fun getTeamDetails(teamId: String): Deferred<Team>
     fun getPlayers(teamId: String): Deferred<List<Player>>
+    fun getPlayerDetails(playerId: String): Deferred<Player>
 }
 
 class SoccerRepositoryImpl(
@@ -44,6 +45,11 @@ class SoccerRepositoryImpl(
 
     override fun getFavoriteMatches(context: Context): List<Match> =
         MatchDatabase(context).findAll()
+
+    override fun getTeamDetails(teamId: String): Deferred<Team> =
+        GlobalScope.async {
+            service.getTeamDetails(teamId).await().teams.first()
+        }
 
     override fun getMatchDetails(eventId: String): Deferred<Match> =
         GlobalScope.async {
@@ -70,8 +76,8 @@ class SoccerRepositoryImpl(
             service.getPlayers(teamId).await().players
         }
 
-    override fun getTeamDetails(teamId: String): Deferred<Team> =
+    override fun getPlayerDetails(playerId: String): Deferred<Player> =
         GlobalScope.async {
-            service.getTeamDetails(teamId).await().teams.first()
+            service.getPlayerDetails(playerId).await().players.first()
         }
 }

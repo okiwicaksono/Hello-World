@@ -1,11 +1,8 @@
 package com.dicoding.finalsoccermatches.presentation.match.detail
 
-import android.content.Intent
 import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v4.app.NavUtils
-import android.support.v4.app.TaskStackBuilder
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
@@ -25,13 +22,19 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
 import kotlinx.android.synthetic.main.activity_detail.*
-import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.launch
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
+import kotlin.coroutines.experimental.CoroutineContext
 
-class MatchDetailActivity : AppCompatActivity(), MatchDetailContract.View {
+class MatchDetailActivity : AppCompatActivity(), MatchDetailContract.View, CoroutineScope {
+    private lateinit var job: Job
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
     private var menuItem: Menu? = null
     private var isFavorite: Boolean = false
     private lateinit var presenter: MatchDetailPresenter
@@ -41,20 +44,27 @@ class MatchDetailActivity : AppCompatActivity(), MatchDetailContract.View {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
-        actionBar?.setDisplayHomeAsUpEnabled(true)
+        job = Job()
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val eventId = intent.getStringExtra(getString(R.string.event_id))
 
         checkFavoriteState(eventId)
         initPresenter(eventId)
 
-        GlobalScope.launch {
+        launch {
             for (viewState in presenter.viewStates()) {
                 runOnUiThread {
                     renderState(viewState)
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 
     override fun renderState(viewState: MatchDetailContract.ViewState) {
@@ -111,7 +121,7 @@ class MatchDetailActivity : AppCompatActivity(), MatchDetailContract.View {
         val soccerService = retrofit.create(SoccerService::class.java)
         val repository: SoccerRepository = SoccerRepositoryImpl(soccerService)
 
-        presenter = MatchDetailPresenter(repository)
+        presenter = MatchDetailPresenter(repository, this)
         presenter.loadMatchDetail(eventId)
     }
 
@@ -120,14 +130,14 @@ class MatchDetailActivity : AppCompatActivity(), MatchDetailContract.View {
 
         date.text = parseToDesiredDate(dateString = match.dateEvent, timeString = match.strTime)
         time.text = parseToDesiredTime(dateString = match.dateEvent, timeString = match.strTime)
-        home_score.text = match.intHomeScore.toString()
-        away_score.text = match.intAwayScore.toString()
+        home_score.text = match.intHomeScore
+        away_score.text = match.intAwayScore
         home_team.text = match.strHomeTeam
         away_team.text = match.strAwayTeam
         home_goals.text = match.strHomeGoalDetails?.let { formatPlayerList(it) }
         away_goals.text = match.strAwayGoalDetails?.let { formatPlayerList(it) }
-        home_shots.text = match.intHomeShots.toString()
-        away_shots.text = match.intAwayShots.toString()
+        home_shots.text = match.intHomeShots
+        away_shots.text = match.intAwayShots
         home_goalkeeper.text = match.strHomeLineupGoalkeeper
         away_goalkeeper.text = match.strAwayLineupGoalkeeper
         home_defenders.text = match.strHomeLineupDefense?.let { formatPlayerList(it) }
@@ -153,17 +163,7 @@ class MatchDetailActivity : AppCompatActivity(), MatchDetailContract.View {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                val upIntent: Intent? = NavUtils.getParentActivityIntent(this)
-
-                when {
-                    upIntent == null -> throw IllegalStateException("No Parent Activity Intent")
-                    NavUtils.shouldUpRecreateTask(this, upIntent) -> {
-                        TaskStackBuilder.create(this)
-                            .addNextIntentWithParentStack(upIntent)
-                            .startActivities()
-                    }
-                    else -> NavUtils.navigateUpTo(this, upIntent)
-                }
+                onBackPressed()
                 true
             }
             R.id.add_to_favorite -> {

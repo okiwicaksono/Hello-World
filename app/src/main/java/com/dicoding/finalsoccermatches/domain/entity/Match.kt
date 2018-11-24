@@ -19,10 +19,10 @@ data class Match(
     val strAwayTeam: String = "",
 
     @JsonProperty("intHomeScore")
-    val intHomeScore: Int = 0,
+    val intHomeScore: String? = "",
 
     @JsonProperty("intAwayScore")
-    val intAwayScore: Int = 0,
+    val intAwayScore: String? = "",
 
     @JsonProperty("strHomeGoalDetails")
     val strHomeGoalDetails: String? = "",
@@ -31,10 +31,10 @@ data class Match(
     val strAwayGoalDetails: String? = "",
 
     @JsonProperty("intHomeShots")
-    val intHomeShots: Int = 0,
+    val intHomeShots: String? = "",
 
     @JsonProperty("intAwayShots")
-    val intAwayShots: Int = 0,
+    val intAwayShots: String? = "",
 
     @JsonProperty("strHomeLineupGoalkeeper")
     val strHomeLineupGoalkeeper: String? = "",

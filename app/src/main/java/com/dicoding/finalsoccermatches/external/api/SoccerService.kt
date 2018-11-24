@@ -30,6 +30,9 @@ interface SoccerService {
     @GET("api/v1/json/1/searchteams.php")
     fun getTeamsByKeyword(@Query("t") keyword: String): Deferred<TeamResponse>
 
-    @GET("api/v1/json/1/lookup_all_players.php?id=133739")
+    @GET("api/v1/json/1/lookup_all_players.php")
     fun getPlayers(@Query("id") teamId: String): Deferred<PlayerResponse>
+
+    @GET("api/v1/json/1/lookupplayer.php")
+    fun getPlayerDetails(@Query("id") playerId: String): Deferred<PlayerDetailResponse>
 }

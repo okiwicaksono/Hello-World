@@ -1,8 +1,7 @@
-package com.dicoding.finalsoccermatches.presentation.team.detail
+package com.dicoding.finalsoccermatches.presentation.player
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.TabLayout
 import android.support.v4.app.NavUtils
 import android.support.v4.app.TaskStackBuilder
 import android.support.v7.app.AppCompatActivity
@@ -13,42 +12,39 @@ import com.dicoding.finalsoccermatches.BuildConfig
 import com.dicoding.finalsoccermatches.R
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepository
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepositoryImpl
-import com.dicoding.finalsoccermatches.domain.entity.Team
+import com.dicoding.finalsoccermatches.domain.entity.Player
 import com.dicoding.finalsoccermatches.external.api.SoccerService
-import com.dicoding.finalsoccermatches.presentation.team.TeamContract
-import com.dicoding.finalsoccermatches.presentation.team.TeamPresenter
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
-import kotlinx.android.synthetic.main.activity_team_detail.*
-import kotlinx.coroutines.experimental.*
+import kotlinx.android.synthetic.main.activity_player_detail.*
+import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.launch
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import kotlin.coroutines.experimental.CoroutineContext
 
-class TeamDetailActivity : AppCompatActivity(),
-    TeamContract.View, CoroutineScope {
+class PlayerDetailActivity : AppCompatActivity(), PlayerDetailContract.View, CoroutineScope {
     private lateinit var job: Job
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
-    private lateinit var presenter: TeamContract.Presenter
+    private lateinit var presenter: PlayerDetailContract.Presenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_team_detail)
+        setContentView(R.layout.activity_player_detail)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         job = Job()
 
-        initPresenter()
+        val playerId = intent.getStringExtra(getString(R.string.player_id))
+        initPresenter(playerId)
         initView()
-
-        val teamId = intent.getStringExtra(getString(R.string.team_id))
-
-        presenter.loadTeamDetails(teamId)
     }
 
     override fun onDestroy() {
@@ -56,7 +52,7 @@ class TeamDetailActivity : AppCompatActivity(),
         job.cancel()
     }
 
-    private fun initPresenter() {
+    private fun initPresenter(playerId: String) {
         if (this::presenter.isInitialized) return
 
         val objectMapper = ObjectMapper()
@@ -90,11 +86,12 @@ class TeamDetailActivity : AppCompatActivity(),
         val soccerService = retrofit.create(SoccerService::class.java)
         val repository: SoccerRepository = SoccerRepositoryImpl(soccerService)
 
-        presenter = TeamPresenter(repository, this)
+        presenter = PlayerDetailPresenter(repository, this)
+        presenter.loadPlayerDetail(playerId)
     }
 
     private fun initView() {
-        GlobalScope.launch {
+        launch {
             for (viewState in presenter.viewStates()) {
                 runOnUiThread {
                     renderState(viewState)
@@ -103,36 +100,20 @@ class TeamDetailActivity : AppCompatActivity(),
         }
     }
 
-    private fun setupView(team: Team) {
-        Glide.with(this).load(team.teamBadge).into(image)
-        name.text = team.strTeam
-        year.text = team.intFormedYear.toString()
-        stadium.text = team.strStadium
-
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.overview)))
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.players)))
-        tabLayout.tabGravity = TabLayout.GRAVITY_FILL
-
-        viewPager.adapter = TeamDetailAdapter(supportFragmentManager, team)
-        viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                viewPager.currentItem = tab.position
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab) {}
-
-            override fun onTabReselected(tab: TabLayout.Tab) {}
-        })
+    private fun setupPlayerToView(player: Player) {
+        Glide.with(this).load(player.strFanart1).into(image)
+        weight.text = player.strWeight
+        height.text = player.strHeight
+        position.text = player.strPosition
+        description.text = player.strDescriptionEN
     }
 
-    override fun renderState(viewState: TeamContract.ViewState) {
+    override fun renderState(viewState: PlayerDetailContract.ViewState) {
         when (viewState) {
-            is TeamContract.ViewState.TeamDetailsResultState -> {
-                val team = viewState.team
-                setupView(team)
+            is PlayerDetailContract.ViewState.PlayerResultState -> {
+                setupPlayerToView(viewState.player)
             }
-            is TeamContract.ViewState.ErrorState -> {
+            is PlayerDetailContract.ViewState.ErrorState -> {
                 Log.e("error", viewState.error)
             }
         }

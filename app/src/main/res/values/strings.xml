@@ -25,4 +25,6 @@
     <string name="player_id">playerId</string>
     <string name="selected_item_id">selectedItemId</string>
     <string name="search_empty_hint">Please enter keyword and press search button</string>
+    <string name="weight_hint">Weight (Kg)</string>
+    <string name="height_hint">Height (m)</string>
 </resources>

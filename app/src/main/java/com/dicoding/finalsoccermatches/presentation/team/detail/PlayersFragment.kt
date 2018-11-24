@@ -14,6 +14,7 @@ import com.dicoding.finalsoccermatches.R
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepository
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepositoryImpl
 import com.dicoding.finalsoccermatches.external.api.SoccerService
+import com.dicoding.finalsoccermatches.presentation.player.PlayerDetailActivity
 import com.dicoding.finalsoccermatches.presentation.team.TeamContract
 import com.dicoding.finalsoccermatches.presentation.team.TeamPresenter
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -115,8 +116,8 @@ class PlayersFragment : Fragment(), TeamContract.View, SwipeRefreshLayout.OnRefr
     private fun initView() {
         swipeRefresh.setOnRefreshListener(this)
 
-        adapter = PlayerAdapter {
-//            startActivity<PlayerDetailActivity>(getString(R.string.player_id) to player.idPlayer)
+        adapter = PlayerAdapter { player ->
+            startActivity<PlayerDetailActivity>(getString(R.string.player_id) to player.idPlayer)
         }
 
         recyclerView.layoutManager = LinearLayoutManager(activity)

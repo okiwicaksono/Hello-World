@@ -49,9 +49,9 @@ class MatchAdapter(
         fun bind(match: Match, calendarListener: (Match) -> Unit) {
             date.text = parseToDesiredDate(dateString = match.dateEvent, timeString = match.strTime)
             time.text = parseToDesiredTime(dateString = match.dateEvent, timeString = match.strTime)
-            homeScore.text = match.intHomeScore.toString()
+            homeScore.text = match.intHomeScore
             homeScore.visible()
-            awayScore.text = match.intAwayScore.toString()
+            awayScore.text = match.intAwayScore
             awayScore.visible()
             homeTeamName.text = match.strHomeTeam
             awayTeamName.text = match.strAwayTeam

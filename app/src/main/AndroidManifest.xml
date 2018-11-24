@@ -21,18 +21,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".presentation.match.detail.MatchDetailActivity"
-            android:parentActivityName=".presentation.MainActivity" />
-        <activity
-            android:name=".presentation.search.MatchSearchActivity"
-            android:parentActivityName=".presentation.MainActivity" />
-        <activity
-            android:name=".presentation.team.detail.TeamDetailActivity"
-            android:parentActivityName=".presentation.MainActivity" />
-        <activity
-            android:name=".presentation.search.TeamSearchActivity"
-            android:parentActivityName=".presentation.MainActivity" />
+        <activity android:name=".presentation.match.detail.MatchDetailActivity" />
+        <activity android:name=".presentation.search.MatchSearchActivity" />
+        <activity android:name=".presentation.team.detail.TeamDetailActivity" />
+        <activity android:name=".presentation.search.TeamSearchActivity" />
+        <activity android:name=".presentation.player.PlayerDetailActivity" />
     </application>
 
 </manifest>

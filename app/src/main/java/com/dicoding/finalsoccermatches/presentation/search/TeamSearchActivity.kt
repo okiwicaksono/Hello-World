@@ -1,13 +1,17 @@
 package com.dicoding.finalsoccermatches.presentation.search
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.NavUtils
+import android.support.v4.app.TaskStackBuilder
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import com.dicoding.finalsoccermatches.BuildConfig
 import com.dicoding.finalsoccermatches.R
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepository
@@ -43,6 +47,9 @@ class TeamSearchActivity : AppCompatActivity(), TeamContract.View,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_team_search)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         initPresenter()
         initView()
 
@@ -168,5 +175,15 @@ class TeamSearchActivity : AppCompatActivity(), TeamContract.View,
         })
 
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }
