@@ -9,6 +9,7 @@ import com.dicoding.finalsoccermatches.domain.entity.MatchType
 import com.dicoding.finalsoccermatches.presentation.match.MatchFragment
 import com.dicoding.finalsoccermatches.presentation.match.MatchParentFragment
 import com.dicoding.finalsoccermatches.presentation.search.MatchSearchActivity
+import com.dicoding.finalsoccermatches.presentation.search.TeamSearchActivity
 import com.dicoding.finalsoccermatches.presentation.team.TeamFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.startActivity
@@ -71,21 +72,6 @@ class MainActivity : AppCompatActivity() {
                     MatchFragment::class.java.simpleName
                 )
                 .commit()
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.search_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.search -> {
-                startActivity<MatchSearchActivity>(getString(R.string.selected_item_id) to bottom_navigation.selectedItemId)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 }

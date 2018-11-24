@@ -1,5 +1,6 @@
 package com.dicoding.finalsoccermatches.presentation.search
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
@@ -8,13 +9,10 @@ import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.Menu
 import android.widget.Toast
-import com.dicoding.finalsoccermatches.BuildConfig
-import com.dicoding.finalsoccermatches.R
-import com.dicoding.finalsoccermatches.createCalendarIntent
+import com.dicoding.finalsoccermatches.*
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepository
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepositoryImpl
 import com.dicoding.finalsoccermatches.external.api.SoccerService
-import com.dicoding.finalsoccermatches.parseToDesiredTimestamp
 import com.dicoding.finalsoccermatches.presentation.match.detail.MatchDetailActivity
 import com.dicoding.finalsoccermatches.presentation.match.MatchAdapter
 import com.dicoding.finalsoccermatches.presentation.match.MatchContract
@@ -39,7 +37,6 @@ class MatchSearchActivity : AppCompatActivity(), MatchContract.View,
     private lateinit var adapter: MatchAdapter
     private lateinit var presenter: MatchContract.Presenter
     private lateinit var searchView: SearchView
-    private var selectedItemId: Int = R.id.matches
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +44,7 @@ class MatchSearchActivity : AppCompatActivity(), MatchContract.View,
         initPresenter()
         initView()
 
-        selectedItemId = intent.getIntExtra(getString(R.string.selected_item_id), R.id.matches)
+        emptyView.visible()
     }
 
     private fun initPresenter() {
@@ -128,6 +125,7 @@ class MatchSearchActivity : AppCompatActivity(), MatchContract.View,
         job.cancel()
     }
 
+    @SuppressLint("SetTextI18n")
     override fun renderState(viewState: MatchContract.ViewState) {
         when (viewState) {
             is MatchContract.ViewState.LoadingState -> {
@@ -135,11 +133,16 @@ class MatchSearchActivity : AppCompatActivity(), MatchContract.View,
             }
             is MatchContract.ViewState.MatchResultState -> {
                 swipeRefresh.isRefreshing = false
-                adapter.submitList(viewState.matches)
+                if (viewState.matches.isEmpty()) {
+                    emptyView.text = "No data for ${searchView.query.trim()}"
+                } else {
+                    adapter.submitList(viewState.matches)
+                    emptyView.invisible()
+                }
             }
             is MatchContract.ViewState.ErrorState -> {
                 swipeRefresh.isRefreshing = false
-                Toast.makeText(this, viewState.error, Toast.LENGTH_SHORT).show()
+                emptyView.text = "No data for ${searchView.query.trim()}"
                 Log.e("error", viewState.error)
             }
         }
@@ -148,9 +151,7 @@ class MatchSearchActivity : AppCompatActivity(), MatchContract.View,
     override fun onRefresh() {
         val query = searchView.query.toString().trim().replace(" ", "_")
         if (query.isNotEmpty()) {
-            when (selectedItemId) {
-                R.id.matches -> presenter.loadMatchesByKeyword(query)
-            }
+            presenter.loadMatchesByKeyword(query)
         }
     }
 

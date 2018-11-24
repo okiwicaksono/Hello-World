@@ -6,9 +6,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -22,6 +20,7 @@ import com.dicoding.finalsoccermatches.domain.entity.MatchType
 import com.dicoding.finalsoccermatches.external.api.SoccerService
 import com.dicoding.finalsoccermatches.parseToDesiredTimestamp
 import com.dicoding.finalsoccermatches.presentation.match.detail.MatchDetailActivity
+import com.dicoding.finalsoccermatches.presentation.search.MatchSearchActivity
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
@@ -64,6 +63,11 @@ class MatchFragment : Fragment(), MatchContract.View,
     override fun onDetach() {
         super.onDetach()
         job.cancel()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -147,6 +151,21 @@ class MatchFragment : Fragment(), MatchContract.View,
                     renderState(viewState)
                 }
             }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.search_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.search -> {
+                startActivity<MatchSearchActivity>()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

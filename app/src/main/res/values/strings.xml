@@ -21,4 +21,5 @@
     <string name="event_id">eventId</string>
     <string name="team_id">teamId</string>
     <string name="selected_item_id">selectedItemId</string>
+    <string name="search_empty_hint">Please enter keyword and press search button</string>
 </resources>
