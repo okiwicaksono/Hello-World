@@ -1,4 +1,4 @@
-package com.dicoding.finalsoccermatches.presentation.detail
+package com.dicoding.finalsoccermatches.presentation.match.detail
 
 import android.content.Intent
 import android.database.sqlite.SQLiteConstraintException
@@ -15,10 +15,10 @@ import com.bumptech.glide.Glide
 import com.dicoding.finalsoccermatches.*
 import com.dicoding.finalsoccermatches.R.drawable.ic_add_to_favorites
 import com.dicoding.finalsoccermatches.R.drawable.ic_added_to_favorites
-import com.dicoding.finalsoccermatches.domain.data.MatchRepository
-import com.dicoding.finalsoccermatches.domain.data.MatchRepositoryImpl
+import com.dicoding.finalsoccermatches.domain.data.SoccerRepository
+import com.dicoding.finalsoccermatches.domain.data.SoccerRepositoryImpl
 import com.dicoding.finalsoccermatches.domain.entity.Match
-import com.dicoding.finalsoccermatches.external.api.MatchService
+import com.dicoding.finalsoccermatches.external.api.SoccerService
 import com.dicoding.finalsoccermatches.external.database.MatchDatabase
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -31,10 +31,10 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 
-class DetailActivity : AppCompatActivity(), DetailContract.View {
+class MatchDetailActivity : AppCompatActivity(), MatchDetailContract.View {
     private var menuItem: Menu? = null
     private var isFavorite: Boolean = false
-    private lateinit var presenter: DetailPresenter
+    private lateinit var presenter: MatchDetailPresenter
     private lateinit var match: Match
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,20 +57,20 @@ class DetailActivity : AppCompatActivity(), DetailContract.View {
         }
     }
 
-    override fun renderState(viewState: DetailContract.ViewState) {
+    override fun renderState(viewState: MatchDetailContract.ViewState) {
         when (viewState) {
-            is DetailContract.ViewState.LoadingState -> {
+            is MatchDetailContract.ViewState.LoadingState -> {
                 swipeRefresh.isRefreshing = true
             }
-            is DetailContract.ViewState.MatchResultState -> {
+            is MatchDetailContract.ViewState.MatchResultState -> {
                 swipeRefresh.isRefreshing = false
                 setupMatchToView(viewState.match)
             }
-            is DetailContract.ViewState.URLResultState -> {
+            is MatchDetailContract.ViewState.URLResultState -> {
                 swipeRefresh.isRefreshing = false
                 Glide.with(this).load(viewState.imageUrl).into(viewState.imageView)
             }
-            is DetailContract.ViewState.ErrorState -> {
+            is MatchDetailContract.ViewState.ErrorState -> {
                 swipeRefresh.isRefreshing = false
                 Toast.makeText(this, viewState.error, Toast.LENGTH_SHORT).show()
             }
@@ -108,10 +108,10 @@ class DetailActivity : AppCompatActivity(), DetailContract.View {
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
 
-        val movieService = retrofit.create(MatchService::class.java)
-        val repository: MatchRepository = MatchRepositoryImpl(movieService)
+        val movieService = retrofit.create(SoccerService::class.java)
+        val repository: SoccerRepository = SoccerRepositoryImpl(movieService)
 
-        presenter = DetailPresenter(repository)
+        presenter = MatchDetailPresenter(repository)
         presenter.loadMatchDetail(eventId)
     }
 

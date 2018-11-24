@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">Soccer Matches</string>
-    <string name="tab_text_1">Last Matches</string>
-    <string name="tab_text_2">Next Matches</string>
+    <string name="tab_text_1">Matches</string>
+    <string name="tab_text_2">Teams</string>
     <string name="tab_text_3">Favorites</string>
+    <string name="last_match">Last</string>
+    <string name="next_match">Next</string>
     <string name="search">Search</string>
     <string name="vs">vs</string>
     <string name="match_detail">Match Detail</string>
@@ -17,5 +19,6 @@
     <string name="added_to_favorite">Added to favorite</string>
     <string name="remove_from_favorite">Removed from favorite</string>
     <string name="event_id">eventId</string>
+    <string name="team_id">teamId</string>
     <string name="selected_item_id">selectedItemId</string>
 </resources>

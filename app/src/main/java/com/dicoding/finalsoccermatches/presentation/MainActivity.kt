@@ -9,6 +9,7 @@ import com.dicoding.finalsoccermatches.domain.entity.MatchType
 import com.dicoding.finalsoccermatches.presentation.match.MatchFragment
 import com.dicoding.finalsoccermatches.presentation.match.MatchParentFragment
 import com.dicoding.finalsoccermatches.presentation.search.MatchSearchActivity
+import com.dicoding.finalsoccermatches.presentation.team.TeamFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.startActivity
 
@@ -19,32 +20,19 @@ class MainActivity : AppCompatActivity() {
 
         bottom_navigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.last_matches -> {
+                R.id.matches -> {
                     loadMatchParentFragment(savedInstanceState)
                 }
-                R.id.next_matches -> {
-                    loadMatchFragment(savedInstanceState, MatchType.NEXT)
+                R.id.teams -> {
+                    loadTeamFragment(savedInstanceState)
                 }
                 R.id.favorites -> {
-                    loadMatchFragment(savedInstanceState, MatchType.FAVORITE)
+                    loadFavoriteFragment(savedInstanceState)
                 }
             }
             true
         }
-        bottom_navigation.selectedItemId = R.id.last_matches
-    }
-
-    private fun loadMatchFragment(savedInstanceState: Bundle?, matchType: MatchType) {
-        if (savedInstanceState == null) {
-            supportFragmentManager
-                .beginTransaction()
-                .replace(
-                    R.id.main_container,
-                    MatchFragment.newInstance(matchType),
-                    MatchFragment::class.java.simpleName
-                )
-                .commit()
-        }
+        bottom_navigation.selectedItemId = R.id.matches
     }
 
     private fun loadMatchParentFragment(savedInstanceState: Bundle?) {
@@ -54,6 +42,32 @@ class MainActivity : AppCompatActivity() {
                 .replace(
                     R.id.main_container,
                     MatchParentFragment(),
+                    MatchFragment::class.java.simpleName
+                )
+                .commit()
+        }
+    }
+
+    private fun loadTeamFragment(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null) {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(
+                    R.id.main_container,
+                    TeamFragment(),
+                    MatchFragment::class.java.simpleName
+                )
+                .commit()
+        }
+    }
+
+    private fun loadFavoriteFragment(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null) {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(
+                    R.id.main_container,
+                    MatchFragment.newInstance(MatchType.FAVORITE),
                     MatchFragment::class.java.simpleName
                 )
                 .commit()

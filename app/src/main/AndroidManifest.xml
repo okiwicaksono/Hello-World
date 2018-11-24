@@ -20,11 +20,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.detail.DetailActivity"
+            android:name=".presentation.match.detail.MatchDetailActivity"
             android:parentActivityName=".presentation.MainActivity" />
         <activity
             android:name=".presentation.search.MatchSearchActivity"
             android:parentActivityName=".presentation.MainActivity" />
+        <activity
+            android:name=".presentation.team.detail.TeamDetailActivity"
+            android:label="@string/title_activity_team_detail"
+            android:parentActivityName=".presentation.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.dicoding.finalsoccermatches.presentation.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

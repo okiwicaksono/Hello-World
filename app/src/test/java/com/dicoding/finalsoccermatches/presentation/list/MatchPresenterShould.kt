@@ -1,6 +1,6 @@
 package com.dicoding.finalsoccermatches.presentation.list
 
-import com.dicoding.finalsoccermatches.domain.data.MatchRepository
+import com.dicoding.finalsoccermatches.domain.data.SoccerRepository
 import com.dicoding.finalsoccermatches.domain.entity.Match
 import com.dicoding.finalsoccermatches.presentation.match.MatchContract
 import com.dicoding.finalsoccermatches.presentation.match.MatchPresenter
@@ -18,7 +18,7 @@ import org.mockito.Mockito.`when` as whenever
 @RunWith(MockitoJUnitRunner.StrictStubs::class)
 class MatchPresenterShould {
 
-    private val repository = Mockito.mock(MatchRepository::class.java)
+    private val repository = Mockito.mock(SoccerRepository::class.java)
 
     private val presenter = MatchPresenter(repository)
 

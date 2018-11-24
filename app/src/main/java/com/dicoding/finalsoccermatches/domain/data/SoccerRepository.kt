@@ -4,25 +4,27 @@ import android.content.Context
 import com.dicoding.finalsoccermatches.domain.entity.League
 import com.dicoding.finalsoccermatches.domain.entity.Match
 import com.dicoding.finalsoccermatches.domain.entity.Team
-import com.dicoding.finalsoccermatches.external.api.MatchService
+import com.dicoding.finalsoccermatches.external.api.SoccerService
 import com.dicoding.finalsoccermatches.external.database.MatchDatabase
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 
-interface MatchRepository {
+interface SoccerRepository {
     fun getAllLeagues(): Deferred<List<League>>
     fun getPastMatches(leagueId: String): Deferred<List<Match>>
     fun getNextMatches(leagueId: String): Deferred<List<Match>>
     fun getFavoriteMatches(context: Context): List<Match>
     fun getTeamBadge(teamId: String): Deferred<Team>
     fun getMatchDetails(eventId: String): Deferred<Match>
-    fun getMatchByKeyword(keyword: String): Deferred<List<Match>>
+    fun getMatchesByKeyword(keyword: String): Deferred<List<Match>>
+    fun getTeam(leagueId: String): Deferred<List<Team>>
+    fun getTeamsByKeyword(keyword: String): Deferred<List<Team>>
 }
 
-class MatchRepositoryImpl(
-    private val service: MatchService
-) : MatchRepository {
+class SoccerRepositoryImpl(
+    private val service: SoccerService
+) : SoccerRepository {
     override fun getAllLeagues(): Deferred<List<League>> =
         GlobalScope.async {
             service.getAllLeagues().await().leagues
@@ -51,8 +53,18 @@ class MatchRepositoryImpl(
             service.getMatchDetails(eventId).await().matches.first()
         }
 
-    override fun getMatchByKeyword(keyword: String): Deferred<List<Match>> =
+    override fun getMatchesByKeyword(keyword: String): Deferred<List<Match>> =
         GlobalScope.async {
             service.getMatchByKeyword(keyword).await().matches
+        }
+
+    override fun getTeam(leagueId: String): Deferred<List<Team>> =
+        GlobalScope.async {
+            service.getTeams(leagueId).await().teams
+        }
+
+    override fun getTeamsByKeyword(keyword: String): Deferred<List<Team>> =
+        GlobalScope.async {
+            service.getTeamsByKeyword(keyword).await().teams
         }
 }

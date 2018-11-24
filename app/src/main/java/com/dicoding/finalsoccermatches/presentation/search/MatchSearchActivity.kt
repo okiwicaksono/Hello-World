@@ -11,11 +11,11 @@ import android.widget.Toast
 import com.dicoding.finalsoccermatches.BuildConfig
 import com.dicoding.finalsoccermatches.R
 import com.dicoding.finalsoccermatches.createCalendarIntent
-import com.dicoding.finalsoccermatches.domain.data.MatchRepository
-import com.dicoding.finalsoccermatches.domain.data.MatchRepositoryImpl
-import com.dicoding.finalsoccermatches.external.api.MatchService
+import com.dicoding.finalsoccermatches.domain.data.SoccerRepository
+import com.dicoding.finalsoccermatches.domain.data.SoccerRepositoryImpl
+import com.dicoding.finalsoccermatches.external.api.SoccerService
 import com.dicoding.finalsoccermatches.parseToDesiredTimestamp
-import com.dicoding.finalsoccermatches.presentation.detail.DetailActivity
+import com.dicoding.finalsoccermatches.presentation.match.detail.MatchDetailActivity
 import com.dicoding.finalsoccermatches.presentation.match.MatchAdapter
 import com.dicoding.finalsoccermatches.presentation.match.MatchContract
 import com.dicoding.finalsoccermatches.presentation.match.MatchPresenter
@@ -39,7 +39,7 @@ class MatchSearchActivity : AppCompatActivity(), MatchContract.View,
     private lateinit var adapter: MatchAdapter
     private lateinit var presenter: MatchContract.Presenter
     private lateinit var searchView: SearchView
-    private var selectedItemId: Int = R.id.last_matches
+    private var selectedItemId: Int = R.id.matches
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +47,7 @@ class MatchSearchActivity : AppCompatActivity(), MatchContract.View,
         initPresenter()
         initView()
 
-        selectedItemId = intent.getIntExtra(getString(R.string.selected_item_id), R.id.last_matches)
+        selectedItemId = intent.getIntExtra(getString(R.string.selected_item_id), R.id.matches)
     }
 
     private fun initPresenter() {
@@ -81,8 +81,8 @@ class MatchSearchActivity : AppCompatActivity(), MatchContract.View,
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
 
-        val movieService = retrofit.create(MatchService::class.java)
-        val repository: MatchRepository = MatchRepositoryImpl(movieService)
+        val movieService = retrofit.create(SoccerService::class.java)
+        val repository: SoccerRepository = SoccerRepositoryImpl(movieService)
 
         presenter = MatchPresenter(repository, this)
     }
@@ -91,7 +91,7 @@ class MatchSearchActivity : AppCompatActivity(), MatchContract.View,
         swipeRefresh.setOnRefreshListener(this)
 
         adapter = MatchAdapter({ match ->
-            startActivity<DetailActivity>(getString(R.string.event_id) to match.idEvent)
+            startActivity<MatchDetailActivity>(getString(R.string.event_id) to match.idEvent)
         }, { match ->
             val title = match.strEvent
             val startTimeMillis = parseToDesiredTimestamp(match.dateEvent, match.strTime, 0)
@@ -149,7 +149,7 @@ class MatchSearchActivity : AppCompatActivity(), MatchContract.View,
         val query = searchView.query.toString().trim().replace(" ", "_")
         if (query.isNotEmpty()) {
             when (selectedItemId) {
-                R.id.last_matches -> presenter.loadMatchesByKeyword(query)
+                R.id.matches -> presenter.loadMatchesByKeyword(query)
             }
         }
     }

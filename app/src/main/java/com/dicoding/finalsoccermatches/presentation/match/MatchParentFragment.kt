@@ -17,8 +17,8 @@ class MatchParentFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.tab_text_1)))
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.tab_text_2)))
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.last_match)))
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.next_match)))
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
 
         val adapter = MatchParentAdapter(childFragmentManager)

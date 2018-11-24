@@ -1,4 +1,4 @@
-package com.dicoding.finalsoccermatches.presentation.match
+package com.dicoding.finalsoccermatches.presentation.team
 
 import android.content.Context
 import android.os.Bundle
@@ -14,19 +14,16 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.dicoding.finalsoccermatches.BuildConfig
 import com.dicoding.finalsoccermatches.R
-import com.dicoding.finalsoccermatches.createCalendarIntent
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepository
 import com.dicoding.finalsoccermatches.domain.data.SoccerRepositoryImpl
 import com.dicoding.finalsoccermatches.domain.entity.League
-import com.dicoding.finalsoccermatches.domain.entity.MatchType
 import com.dicoding.finalsoccermatches.external.api.SoccerService
-import com.dicoding.finalsoccermatches.parseToDesiredTimestamp
-import com.dicoding.finalsoccermatches.presentation.match.detail.MatchDetailActivity
+import com.dicoding.finalsoccermatches.presentation.team.detail.TeamDetailActivity
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
-import kotlinx.android.synthetic.main.fragment_match.*
+import kotlinx.android.synthetic.main.fragment_team.*
 import kotlinx.coroutines.experimental.*
 import okhttp3.OkHttpClient
 import org.jetbrains.anko.support.v4.startActivity
@@ -34,27 +31,14 @@ import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import kotlin.coroutines.experimental.CoroutineContext
 
-class MatchFragment : Fragment(), MatchContract.View,
+class TeamFragment : Fragment(), TeamContract.View,
     SwipeRefreshLayout.OnRefreshListener, CoroutineScope {
     private lateinit var job: Job
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
-    private lateinit var adapter: MatchAdapter
+    private lateinit var adapter: TeamAdapter
     private lateinit var spinnerAdapter: ArrayAdapter<League>
-    private lateinit var presenter: MatchContract.Presenter
-
-    companion object {
-        private const val ARG_TYPE = "match_type"
-
-        fun newInstance(matchType: MatchType): MatchFragment {
-            val args = Bundle().also {
-                it.putString(ARG_TYPE, matchType.type)
-            }
-            return MatchFragment().apply {
-                arguments = args
-            }
-        }
-    }
+    private lateinit var presenter: TeamContract.Presenter
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -70,7 +54,7 @@ class MatchFragment : Fragment(), MatchContract.View,
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_match, container, false)
+        return inflater.inflate(R.layout.fragment_team, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -116,27 +100,15 @@ class MatchFragment : Fragment(), MatchContract.View,
         val movieService = retrofit.create(SoccerService::class.java)
         val repository: SoccerRepository = SoccerRepositoryImpl(movieService)
 
-        presenter = MatchPresenter(repository, this)
+        presenter = TeamPresenter(repository, this)
     }
 
     private fun initView() {
         swipeRefresh.setOnRefreshListener(this)
 
-        adapter = MatchAdapter({ match ->
-            startActivity<MatchDetailActivity>(getString(R.string.event_id) to match.idEvent)
-        }, { match ->
-            val title = match.strEvent
-            val startTimeMillis = parseToDesiredTimestamp(match.dateEvent, match.strTime, 0)
-            val endTimeMillis = parseToDesiredTimestamp(match.dateEvent, match.strTime, 1)
-            startActivity(
-                createCalendarIntent(
-                    title = title,
-                    startDateMillis = startTimeMillis,
-                    endDateMillis = endTimeMillis,
-                    description = title
-                )
-            )
-        })
+        adapter = TeamAdapter { team ->
+             startActivity<TeamDetailActivity>(getString(R.string.team_id) to team.idTeam)
+        }
 
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.adapter = adapter
@@ -150,12 +122,12 @@ class MatchFragment : Fragment(), MatchContract.View,
         }
     }
 
-    override fun renderState(viewState: MatchContract.ViewState) {
+    override fun renderState(viewState: TeamContract.ViewState) {
         when (viewState) {
-            is MatchContract.ViewState.LoadingState -> {
+            is TeamContract.ViewState.LoadingState -> {
                 swipeRefresh.isRefreshing = true
             }
-            is MatchContract.ViewState.LeagueResultState -> {
+            is TeamContract.ViewState.LeagueResultState -> {
                 activity?.applicationContext?.let {
                     spinnerAdapter = ArrayAdapter(it, android.R.layout.simple_spinner_item, viewState.leagues)
                     spinner.adapter = spinnerAdapter
@@ -169,11 +141,11 @@ class MatchFragment : Fragment(), MatchContract.View,
                     }
                 }
             }
-            is MatchContract.ViewState.MatchResultState -> {
+            is TeamContract.ViewState.TeamResultState -> {
                 swipeRefresh.isRefreshing = false
-                adapter.submitList(viewState.matches)
+                adapter.submitList(viewState.teams)
             }
-            is MatchContract.ViewState.ErrorState -> {
+            is TeamContract.ViewState.ErrorState -> {
                 swipeRefresh.isRefreshing = false
                 Toast.makeText(activity, viewState.error, Toast.LENGTH_SHORT).show()
                 Log.e("error", viewState.error)
@@ -182,21 +154,7 @@ class MatchFragment : Fragment(), MatchContract.View,
     }
 
     override fun onRefresh() {
-        activity?.let { activity ->
-            arguments?.getString(ARG_TYPE).let {
-                val leagueId = spinnerAdapter.getItem(spinner.selectedItemPosition)?.idLeague ?: "0"
-                when (it) {
-                    MatchType.LAST.type -> {
-                        presenter.loadPastMatches(leagueId)
-                    }
-                    MatchType.NEXT.type -> {
-                        presenter.loadNextMatches(leagueId)
-                    }
-                    MatchType.FAVORITE.type -> {
-                        presenter.loadFavoriteMatches(activity)
-                    }
-                }
-            }
-        }
+        val leagueId = spinnerAdapter.getItem(spinner.selectedItemPosition)?.idLeague ?: "0"
+        presenter.loadTeams(leagueId)
     }
 }

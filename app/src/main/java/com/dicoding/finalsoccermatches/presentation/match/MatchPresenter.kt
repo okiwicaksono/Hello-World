@@ -1,14 +1,14 @@
 package com.dicoding.finalsoccermatches.presentation.match
 
 import android.content.Context
-import com.dicoding.finalsoccermatches.domain.data.MatchRepository
+import com.dicoding.finalsoccermatches.domain.data.SoccerRepository
 import kotlinx.coroutines.experimental.CancellationException
 import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.launch
 
 class MatchPresenter(
-    private val repository: MatchRepository,
+    private val repository: SoccerRepository,
     scope: CoroutineScope
 ) : MatchContract.Presenter(), CoroutineScope by scope {
     private val viewStates = Channel<MatchContract.ViewState>()
@@ -96,7 +96,7 @@ class MatchPresenter(
         launch {
             try {
                 viewStates.send(MatchContract.ViewState.LoadingState)
-                val matches = repository.getMatchByKeyword(keyword).await()
+                val matches = repository.getMatchesByKeyword(keyword).await()
                 viewStates.send(
                     MatchContract.ViewState.MatchResultState(matches.filter { match ->
                         match.strSport == "Soccer"

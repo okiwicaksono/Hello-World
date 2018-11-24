@@ -1,11 +1,11 @@
-package com.dicoding.finalsoccermatches.presentation.detail
+package com.dicoding.finalsoccermatches.presentation.match.detail
 
 import android.arch.lifecycle.ViewModel
 import android.widget.ImageView
 import com.dicoding.finalsoccermatches.domain.entity.Match
 import kotlinx.coroutines.experimental.channels.Channel
 
-interface DetailContract {
+interface MatchDetailContract {
     abstract class Presenter : ViewModel() {
         abstract fun viewStates(): Channel<ViewState>
         abstract fun loadTeamBadge(teamId: String, imageView: ImageView)
